@@ -394,8 +394,7 @@
         }
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const functions = firebase.functions(); // Initialize Cloud Functions
-
+const functions = firebase.app().functions('us-central1');
         // --- HELPERS ---
         function cleanTitle(filename) {
             let name = filename.replace(/\.(mp3|wav|flac|ogg|aif|m4a).*/gi, '');
