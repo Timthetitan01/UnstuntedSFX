@@ -607,9 +607,14 @@ const functions = firebase.app().functions('us-central1');
                 const result = await response.json();
 
                 // 3. Check for errors
-if (result.error) { 
-    throw new Error(result.error.message || result.error || "Unknown Backend Error"); 
-}
+// 3. Check for errors
+                if (result.error) {
+                    // DEBUG: Alert the raw error to see what's happening
+                    alert("SERVER ERROR: " + JSON.stringify(result.error));
+                    
+                    // Throw it so the toast sees it too
+                    throw new Error(result.error.message || result.error || "Unknown Backend Error");
+                }
 
                 // 4. Redirect (onCall returns data inside a "result" wrapper)
                 if (result.result && result.result.url) {
