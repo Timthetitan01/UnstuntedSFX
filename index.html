@@ -6,8 +6,10 @@
     <title>SonicLibrary | Ultimate Collection</title>
 
     <script src="https://js.stripe.com/v3/"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <style>
         /* --- DESIGN SYSTEM --- */
@@ -96,6 +98,7 @@
         .btn-primary:hover { transform: scale(1.05); }
         .btn-sub { background: var(--accent); color: white; }
         .user-avatar { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: none; border: 2px solid var(--accent); object-fit: cover; }
+        .tier-tag { font-size: 0.75rem; font-weight: bold; color: var(--accent); border: 1px solid var(--accent); padding: 2px 8px; border-radius: 12px; display: none; }
 
         /* Filters */
         .type-switcher { display: inline-flex; background: var(--bg-surface); padding: 4px; border-radius: 14px; border: 1px solid var(--border); }
@@ -292,9 +295,8 @@
                     <ul class="tier-features">
                         <li><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 50 Downloads / mo</li>
                         <li><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Standard Quality</li>
-                        <li><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Personal Use License</li>
                     </ul>
-                    <button class="btn-tier" onclick="checkout('price_starter_id')">Choose Starter</button>
+                    <button class="btn-tier" onclick="checkout('starter')">Choose Starter</button>
                 </div>
 
                 <div class="tier-card featured">
@@ -304,9 +306,8 @@
                     <ul class="tier-features">
                         <li><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited Downloads</li>
                         <li><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> High-Res WAV & FLAC</li>
-                        <li><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Commercial License</li>
                     </ul>
-                    <button class="btn-tier" onclick="checkout('price_pro_id')">Choose Pro</button>
+                    <button class="btn-tier" onclick="checkout('pro')">Choose Pro</button>
                 </div>
 
                 <div class="tier-card">
@@ -314,10 +315,9 @@
                     <div class="tier-price">$29<span>/mo</span></div>
                     <ul class="tier-features">
                         <li><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited Everything</li>
-                        <li><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Stems & Project Files</li>
                         <li><svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Team Access (up to 3)</li>
                     </ul>
-                    <button class="btn-tier" onclick="checkout('price_ultimate_id')">Choose Ultimate</button>
+                    <button class="btn-tier" onclick="checkout('ultimate')">Choose Ultimate</button>
                 </div>
             </div>
         </div>
@@ -342,6 +342,8 @@
                         <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
                         Subscribe
                     </button>
+                    
+                    <span id="tierTag" class="tier-tag">PRO</span>
                     <img id="avatar" class="user-avatar" src="" alt="User" title="Click to Logout">
                     
                     <button class="play-btn-small" id="themeToggle" style="border:none; box-shadow: var(--shadow); background: var(--bg-surface);">
@@ -387,81 +389,72 @@
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        // 1. REPLACE WITH YOUR FIREBASE KEYS
+        // --- 1. CONFIGURATION ---
         const firebaseConfig = {
-        apiKey: "AIzaSyCz9644Ha8aRtEb4aTNF6nQJXmU507vFMo",
-        authDomain: "unstunted-5dfce.firebaseapp.com",
-        projectId: "unstunted-5dfce",
-        storageBucket: "unstunted-5dfce.firebasestorage.app",
-        messagingSenderId: "292728949360",
-        appId: "1:292728949360:web:8745e593481da9a79542b5",
-        measurementId: "G-3HLZ3Q8ZEM"
+           apiKey: "YOUR_FIREBASE_API_KEY",
+           authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+           projectId: "YOUR_PROJECT_ID",
+           storageBucket: "YOUR_PROJECT_ID.appspot.com",
+           messagingSenderId: "YOUR_SENDER_ID",
+           appId: "YOUR_APP_ID"
         };
-                
-        // 2. REPLACE WITH YOUR STRIPE PUBLISHABLE KEY
-        const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY');
+        
+        // --- IMPORTANT: YOUR STRIPE LINKS ---
+        // Go to Stripe Dashboard -> Payment Links -> Create New
+        // Paste the URLs here for each tier.
+        const STRIPE_LINKS = {
+            'starter': 'https://buy.stripe.com/test_1', // e.g. https://buy.stripe.com/test_...
+            'pro': 'https://buy.stripe.com/test_2',
+            'ultimate': 'https://buy.stripe.com/test_3'
+        };
 
         // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        // --- HELPERS ---
+        // --- HELPERS (Library Data) ---
         function cleanTitle(filename) {
             let name = filename.replace(/\.(mp3|wav|flac|ogg|aif|m4a).*/gi, '');
             name = name.replace(/_/g, ' ').replace(/-/g, ' ');
             name = name.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
             const words = name.split(/\s+/);
-            if(words.length > 3) {
-                return words.slice(0, 3).join(' ');
-            }
+            if(words.length > 3) return words.slice(0, 3).join(' ');
             return name;
         }
 
-        const rawFiles = [
-            "10_note_guitar_chord_arpeggios_(dissonant_and_e_major_in_harmony).mp3", "120bpm_pannaner2_tr.wav.mp3","120bpm1lambda8sd.wav.mp3","Alien Riser.wav","alien_ambient.mp3","Bass Dancing.wav","bass_98_gm_woodbass.mp3"
+        const library = [
+             { id: 101, title: "Deep Bass Pulse", artist: "Local Library", type: "SFX", category: "Riser", duration: "--:--", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+             { id: 102, title: "Neon Cyber Chase", artist: "Local Library", type: "Music", category: "Techno", duration: "--:--", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+             { id: 103, title: "Alien Atmosphere", artist: "Local Library", type: "SFX", category: "Sci-Fi", duration: "--:--", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
         ];
-        
-        // (Note: To keep this code block scrollable and short, I only included a few files above. 
-        //  The actual implementation should use your full 'rawFiles' list from the original file.)
-        //  ... Re-mapping logic ...
-
-        const library = rawFiles.map((filename, index) => {
-            const clean = cleanTitle(filename);
-            let type = "SFX";
-            let cat = "SFX";
-            const lower = filename.toLowerCase();
-            if (lower.includes("riser") || lower.includes("intro") || lower.includes("build")) { cat = "Riser"; type = "SFX"; } 
-            else if (lower.includes("music") || lower.includes("chord") || lower.includes("bass")) { cat = "Techno"; type = "Music"; }
-            else if (lower.includes("alien")) { cat = "Sci-Fi"; type = "SFX"; }
-            
-            return {
-                id: index + 100,
-                title: clean,
-                artist: "Local Library",
-                type: type,
-                category: cat,
-                duration: "--:--",
-                url: `Risers/${filename}`
-            };
-        });
 
         const webFiles = [
-             { id: 1, title: "Uplifting Tech Bed", artist: "Corporate Music", type: "Music", category: "Electronic", duration: "2:10", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-             { id: 2, title: "Lo-Fi Study Beat", artist: "Chillhop", type: "Music", category: "Electronic", duration: "1:30", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
+             { id: 1, title: "Uplifting Tech Bed", artist: "Corporate Music", type: "Music", category: "Electronic", duration: "2:10", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+             { id: 2, title: "Lo-Fi Study Beat", artist: "Chillhop", type: "Music", category: "Electronic", duration: "1:30", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" }
         ];
         
         const fullLibrary = [...webFiles, ...library];
 
         const categoriesByType = {
-            'all': ['Riser', 'Techno', 'Electronic', 'Cinematic', 'Nature', 'Horror', 'Sci-Fi', 'Foley', 'Ambiance'],
-            'Music': ['Techno', 'Electronic', 'Cinematic', 'Ambiance'],
-            'SFX': ['Riser', 'Nature', 'Horror', 'Sci-Fi', 'Foley', 'Ambiance']
+            'all': ['Riser', 'Techno', 'Electronic', 'Sci-Fi'],
+            'Music': ['Techno', 'Electronic'],
+            'SFX': ['Riser', 'Sci-Fi']
         };
 
-        const state = { playingId: null, isPlaying: false, activeType: 'all', activeCategory: 'all', search: '', user: null, isSubscribed: false };
+        const state = { 
+            playingId: null, 
+            isPlaying: false, 
+            activeType: 'all', 
+            activeCategory: 'all', 
+            search: '', 
+            user: null, 
+            isSubscribed: false,
+            subscriptionTier: null,
+            subscriptionEnd: null
+        };
         const audio = new Audio();
         
         const els = {
@@ -476,48 +469,148 @@
             seekBar: document.getElementById('seekBar'),
             volBar: document.getElementById('volBar'),
             searchInput: document.getElementById('searchInput'),
-            toast: document.getElementById('toast')
+            toast: document.getElementById('toast'),
+            tierTag: document.getElementById('tierTag')
         };
 
         function init() {
             renderSubFilters();
             renderList();
             setupEvents();
-            preloadDurations();
             
+            // Check for Return from Stripe
+            checkPaymentSuccess();
+
             // Listen for Auth State Changes
-            auth.onAuthStateChanged(user => {
+            auth.onAuthStateChanged(async (user) => {
                 state.user = user;
                 if(user) {
-                    showToast(`Welcome, ${user.displayName}`);
+                    // Check Firestore for Subscription Status
+                    await checkSubscriptionStatus(user.uid);
+                    
+                    showToast(`Welcome, ${user.displayName || 'User'}`);
                     closeModal('loginModal');
-                    // In a real app, check DB for subscription status here
-                    // If no subscription, open sub modal
+                    
                     if(!state.isSubscribed) {
-                        setTimeout(() => openModal('subModal'), 1000);
+                        setTimeout(() => openModal('subModal'), 1500);
                     }
+                } else {
+                    state.isSubscribed = false;
+                    state.subscriptionTier = null;
                 }
                 updateAuthState();
             });
         }
 
-        // --- AUTH & MODAL ---
+        // --- 2. FIRESTORE & AUTH LOGIC ---
+
+        // Check user's subscription in Firestore
+        async function checkSubscriptionStatus(uid) {
+            try {
+                const docRef = db.collection('users').doc(uid);
+                const doc = await docRef.get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    const now = Date.now();
+                    
+                    // Logic: Is there a subscription and has it not expired?
+                    if (data.isPremium && data.subscriptionEnd > now) {
+                        state.isSubscribed = true;
+                        state.subscriptionTier = data.tier;
+                        state.subscriptionEnd = data.subscriptionEnd;
+                        console.log(`User has active ${data.tier} subscription until ${new Date(data.subscriptionEnd)}`);
+                    } else {
+                        state.isSubscribed = false;
+                        state.subscriptionTier = null;
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching subscription:", error);
+            }
+            updateAuthState(); // Update UI based on new state
+        }
+
+        // Handle return from Stripe (Successful Payment)
+        async function checkPaymentSuccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Stripe adds ?success=true or session_id if configured
+            if (urlParams.get('success') === 'true' && auth.currentUser) {
+                
+                showToast("Verifying Payment...");
+                
+                // --- SECURITY WARNING ---
+                // In a REAL app, this update happens via Stripe Webhook -> Cloud Function.
+                // Updating this client-side is insecure but functional for this demo.
+                
+                const uid = auth.currentUser.uid;
+                // Default to 'pro' if we can't track exactly which button was clicked in this simple demo
+                // You can store 'pendingTier' in localStorage before redirect to be more accurate
+                const tier = localStorage.getItem('pendingTier') || 'pro'; 
+                
+                // Grant 30 days access
+                const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+                const expiration = Date.now() + thirtyDays;
+
+                await db.collection('users').doc(uid).set({
+                    isPremium: true,
+                    tier: tier,
+                    subscriptionEnd: expiration,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                state.isSubscribed = true;
+                state.subscriptionTier = tier;
+                
+                showToast("Subscription Activated!");
+                
+                // Clean URL
+                window.history.replaceState({}, document.title, "/");
+                updateAuthState();
+            }
+        }
+
+        // --- 3. CHECKOUT FUNCTION ---
+        window.checkout = async function(tierId) {
+            if(!state.user) {
+                alert("Please login first to subscribe.");
+                openModal('loginModal');
+                return;
+            }
+
+            const link = STRIPE_LINKS[tierId];
+            if(!link || link.includes('test_1')) {
+                alert("Please configure your Stripe Link IDs in the code first.");
+                return;
+            }
+
+            // Save the tier they are trying to buy to localStorage so we know what to give them on return
+            localStorage.setItem('pendingTier', tierId);
+
+            showToast(`Redirecting to ${tierId} plan...`);
+            
+            // Redirect to Stripe
+            // Important: Configure your Stripe Link to redirect back to: https://yoursite.com/?success=true
+            setTimeout(() => {
+                window.location.href = link;
+            }, 1000);
+        }
+
+        // --- STANDARD APP LOGIC ---
+
         window.openModal = function(id) { document.getElementById(id).classList.add('open'); }
         window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); }
         
-        // 3. FIREBASE LOGIN
         window.loginWithGoogle = function() {
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider)
-                .catch((error) => {
-                    console.error("Login failed", error);
-                    showToast("Login Failed: " + error.message);
-                });
+                .catch((error) => { showToast("Login Failed: " + error.message); });
         }
 
         window.logout = function() {
             auth.signOut().then(() => {
-                state.isSubscribed = false; // Reset sub on logout
+                state.isSubscribed = false; 
+                state.subscriptionTier = null;
                 showToast("Logged Out");
             });
         }
@@ -526,6 +619,7 @@
             const loginBtn = document.getElementById('loginBtn');
             const subBtn = document.getElementById('subBtn');
             const avatar = document.getElementById('avatar');
+            const tierTag = document.getElementById('tierTag');
 
             if (state.user) {
                 loginBtn.style.display = 'none';
@@ -533,54 +627,21 @@
                 avatar.src = state.user.photoURL || "https://ui-avatars.com/api/?name=User";
                 avatar.onclick = () => { if(confirm("Log out?")) logout(); };
                 
-                if (state.isSubscribed) subBtn.style.display = 'none';
-                else subBtn.style.display = 'flex';
+                if (state.isSubscribed) {
+                    subBtn.style.display = 'none';
+                    tierTag.style.display = 'inline-block';
+                    tierTag.innerText = state.subscriptionTier ? state.subscriptionTier.toUpperCase() : 'PRO';
+                } else {
+                    subBtn.style.display = 'flex';
+                    tierTag.style.display = 'none';
+                }
             } else {
                 loginBtn.style.display = 'flex';
                 subBtn.style.display = 'none';
                 avatar.style.display = 'none';
+                tierTag.style.display = 'none';
             }
             renderList();
-        }
-
-        // 4. STRIPE CHECKOUT
-        window.checkout = async function(priceId) {
-            // Note: Stripe Checkout requires a session created on the backend.
-            // Since this is a client-side only file, this is the logic you would use.
-            
-            showToast("Redirecting to Stripe...");
-            
-            try {
-                // STEP A: Call your backend to create a Checkout Session
-                // const response = await fetch('/create-checkout-session', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ priceId: priceId, userId: state.user.uid })
-                // });
-                // const session = await response.json();
-
-                // STEP B: Redirect to Stripe
-                // const result = await stripe.redirectToCheckout({ sessionId: session.id });
-                
-                // --- MOCK FOR DEMO ---
-                console.log(`Simulating checkout for plan: ${priceId}`);
-                setTimeout(() => {
-                    state.isSubscribed = true;
-                    closeModal('subModal');
-                    updateAuthState();
-                    showToast("Subscription Successful (Mock)!");
-                }, 1500);
-                
-            } catch (error) {
-                console.error("Error:", error);
-                showToast("Payment Error");
-            }
-        }
-
-        function showToast(msg) {
-            els.toast.innerText = msg;
-            els.toast.classList.add('show');
-            setTimeout(() => els.toast.classList.remove('show'), 2000);
         }
 
         window.updateType = function(type) {
@@ -685,7 +746,7 @@
                 return;
             }
             if(!state.isSubscribed) {
-                openModal('subModal'); // Trigger subscription modal if locked
+                openModal('subModal'); 
                 return;
             }
             showToast("Starting Download...");
@@ -742,22 +803,10 @@
             els.mainPlayIcon.innerHTML = icon;
         }
 
-        function preloadDurations() {
-            fullLibrary.forEach(track => {
-                if(track.url.includes('Risers/')) {
-                    const tmp = new Audio(track.url);
-                    tmp.addEventListener('loadedmetadata', () => {
-                        const dur = tmp.duration;
-                        if(isFinite(dur)) {
-                            const m = Math.floor(dur/60);
-                            const s = Math.floor(dur%60);
-                            track.duration = `${m}:${s<10?'0':''}${s}`;
-                            const el = document.getElementById(`dur-${track.id}`);
-                            if(el) el.innerText = track.duration;
-                        }
-                    });
-                }
-            });
+        function showToast(msg) {
+            els.toast.innerText = msg;
+            els.toast.classList.add('show');
+            setTimeout(() => els.toast.classList.remove('show'), 2000);
         }
 
         function setupEvents() {
