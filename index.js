@@ -25,8 +25,8 @@ exports.createStripeCheckout = functions.https.onCall(async (data, context) => {
             quantity: 1,
         }],
         // Where to send the user after they pay (Update with your real URL if hosted)
-        success_url: "http://localhost:5000/?success=true", 
-        cancel_url: "http://localhost:5000/",
+        success_url: "https://timthetitan01.github.io/UnstuntedSFX/?success=true", 
+        cancel_url: "https://timthetitan01.github.io/UnstuntedSFX/",
         metadata: {
             firebaseUID: userId,
             tier: tierName
