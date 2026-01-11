@@ -1,40 +1,54 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-// REPLACE WITH YOUR ACTUAL SECRET KEY (sk_test_...)
+// 1. PASTE YOUR SECRET KEY HERE (Keep the quotes!)
 const stripe = require("stripe")("sk_test_51RIcdZQ5PrTUuyRr3INl6IAgsaTCNx7lx4xu8rJtDRCtrMuUF3l4ulRy3UWZDAZmINhwrAyupxWdNF4ChAu48pkX00vJr3lmrj"); 
 
 admin.initializeApp();
 
-// 1. CREATE CHECKOUT SESSION
-// This function is called by your website. It talks to Stripe securely.
 exports.createStripeCheckout = functions.https.onCall(async (data, context) => {
-    // 1. Security Check: User must be logged in
+    // A. Logging to debug "Internal" errors
+    console.log("Function called by user:", context.auth ? context.auth.uid : "Anonymous");
+    console.log("Data received:", data);
+
     if (!context.auth) {
-        throw new functions.https.HttpsError('unauthenticated', 'You must be logged in.');
+        throw new functions.https.HttpsError('unauthenticated', 'User must be logged in');
     }
 
     const userId = context.auth.uid;
     const { priceId, tierName } = data;
 
-    // 2. Create the Session
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        mode: "subscription", 
-        line_items: [{
-            price: priceId,
-            quantity: 1,
-        }],
-        // Where to send the user after they pay (Update with your real URL if hosted)
-        success_url: "https://timthetitan01.github.io/UnstuntedSFX/?success=true", 
-        cancel_url: "https://timthetitan01.github.io/UnstuntedSFX/",
-        metadata: {
-            firebaseUID: userId,
-            tier: tierName
-        }
-    });
+    // B. Safety Check: Did we get a URL from the frontend?
+    // If not, use your GitHub URL as a fallback so it doesn't crash.
+    const domainUrl = data.domainUrl || "https://timthetitan01.github.io/UnstuntedSFX";
+    
+    // Remove any trailing slash to avoid double slashes like "com//?success"
+    const cleanUrl = domainUrl.replace(/\/$/, ""); 
 
-    // 3. Send the Stripe URL back to the frontend
-    return { url: session.url };
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "subscription",
+            line_items: [{
+                price: priceId,
+                quantity: 1,
+            }],
+            // C. The Redirect URLs
+            success_url: `${cleanUrl}/?success=true`,
+            cancel_url: `${cleanUrl}/`,
+            metadata: {
+                firebaseUID: userId,
+                tier: tierName
+            }
+        });
+
+        console.log("Session created successfully:", session.id);
+        return { url: session.url };
+
+    } catch (error) {
+        // D. Print the REAL error from Stripe to the Firebase logs
+        console.error("Stripe Error:", error);
+        throw new functions.https.HttpsError('internal', `Stripe Error: ${error.message}`);
+    }
 });
 
 // 2. STRIPE WEBHOOK
