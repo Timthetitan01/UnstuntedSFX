@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 
     <style>
         /* --- DESIGN SYSTEM --- */
@@ -284,7 +285,7 @@
                 <div class="price-card popular">
                     <div class="pop-badge">Most Popular</div>
                     <div class="price-title">Yearly</div>
-                    <span class="price-cost">$30<span>/mo</span></span>
+                    <span class="price-cost">$30<span>/yr</span></span>
                     <ul class="feature-list">
                         <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited Downloads</li>
                         <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> High Quality (WAV)</li>
@@ -294,7 +295,7 @@
 
                 <div class="price-card">
                     <div class="price-title">Lifetime</div>
-                    <span class="price-cost">$50<span>/mo</span></span>
+                    <span class="price-cost">$50<span>/once</span></span>
                     <ul class="feature-list">
                         <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Everything in Pro</li>
                         <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Stem Separation</li>
@@ -370,29 +371,30 @@
 
     <script>
         // --- 1. CONFIGURATION ---
-        const firebaseConfig = {
-        apiKey: "AIzaSyCz9644Ha8aRtEb4aTNF6nQJXmU507vFMo",
-        authDomain: "unstunted-5dfce.firebaseapp.com",
-        projectId: "unstunted-5dfce",
-        storageBucket: "unstunted-5dfce.firebasestorage.app",
-        messagingSenderId: "292728949360",
-        appId: "1:292728949360:web:8745e593481da9a79542b5",
-        measurementId: "G-3HLZ3Q8ZEM"
-        };
-        
-        // --- STRIPE LINKS (Replace these) ---
-        const STRIPE_LINKS = {
-            'starter': 'https://buy.stripe.com/fZu14o0DK1LufThdQJ08g09', 
-            'pro': 'https://buy.stripe.com/aFaaEYfyE3TC36vbIB08g0a',
-            'ultimate': 'https://buy.stripe.com/4gM9AU1HO61K0YnbIB08g0b'
+        // ⚠️ REPLACE WITH YOUR REAL STRIPE PRICE IDs (from Stripe Dashboard > Products > Price ID)
+        const STRIPE_PRICES = {
+            'starter': 'price_1SoUbUQ5PrTUuyRrlckFoJ7K', 
+            'pro': 'price_1SoUbUQ5PrTUuyRrlckFoJ7K',     
+            'ultimate': 'price_1SoUbUQ5PrTUuyRrlckFoJ7K' 
         };
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyCz9644Ha8aRtEb4aTNF6nQJXmU507vFMo",
+            authDomain: "unstunted-5dfce.firebaseapp.com",
+            projectId: "unstunted-5dfce",
+            storageBucket: "unstunted-5dfce.firebasestorage.app",
+            messagingSenderId: "292728949360",
+            appId: "1:292728949360:web:8745e593481da9a79542b5",
+            measurementId: "G-3HLZ3Q8ZEM"
+        };
+        
         // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const functions = firebase.functions(); // Initialize Cloud Functions
 
         // --- HELPERS ---
         function cleanTitle(filename) {
@@ -506,7 +508,6 @@
                     closeModal('loginModal');
                     
                     if(!state.isSubscribed) {
-                        // Open pricing if not subscribed after login
                         setTimeout(() => openModal('pricingModal'), 1500);
                     }
                 } else {
@@ -529,7 +530,6 @@
                     const data = doc.data();
                     const now = Date.now();
                     
-                    // Logic: Is there a subscription and has it not expired?
                     if (data.isPremium && data.subscriptionEnd > now) {
                         state.isSubscribed = true;
                         state.subscriptionTier = data.tier;
@@ -543,49 +543,32 @@
             } catch (error) {
                 console.error("Error fetching subscription:", error);
             }
-            updateAuthState(); // Update UI based on new state
+            updateAuthState(); 
         }
 
         // Handle return from Stripe (Successful Payment)
         async function checkPaymentSuccess() {
             const urlParams = new URLSearchParams(window.location.search);
-            // Stripe adds ?success=true or session_id if configured
             if (urlParams.get('success') === 'true' && auth.currentUser) {
+                showToast("Payment Successful! Verifying...");
                 
-                showToast("Verifying Payment...");
-                
-                // --- SECURITY WARNING ---
-                // In a REAL app, this update happens via Stripe Webhook -> Cloud Function.
-                // Updating this client-side is insecure but functional for this demo.
-                
-                const uid = auth.currentUser.uid;
-                // Default to 'pro' if we can't track exactly which button was clicked in this simple demo
-                // You can store 'pendingTier' in localStorage before redirect to be more accurate
-                const tier = localStorage.getItem('pendingTier') || 'pro'; 
-                
-                // Grant 30 days access
-                const thirtyDays = 30 * 24 * 60 * 60 * 1000;
-                const expiration = Date.now() + thirtyDays;
-
-                await db.collection('users').doc(uid).set({
-                    isPremium: true,
-                    tier: tier,
-                    subscriptionEnd: expiration,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-
-                state.isSubscribed = true;
-                state.subscriptionTier = tier;
-                
-                showToast("Subscription Activated!");
-                
-                // Clean URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-                updateAuthState();
+                // Poll the database for the update (Webhook takes 2-3 seconds)
+                let attempts = 0;
+                const interval = setInterval(async () => {
+                    attempts++;
+                    await checkSubscriptionStatus(auth.currentUser.uid);
+                    
+                    if (state.isSubscribed || attempts > 5) {
+                        clearInterval(interval);
+                        // Clean URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        if(state.isSubscribed) showToast("Subscription Activated!");
+                    }
+                }, 2000);
             }
         }
 
-        // --- 3. CHECKOUT FUNCTION ---
+        // --- 3. SECURE CHECKOUT FUNCTION ---
         window.checkout = async function(tierId) {
             if(!state.user) {
                 alert("Please login first to subscribe.");
@@ -593,21 +576,30 @@
                 return;
             }
 
-            const link = STRIPE_LINKS[tierId];
-            if(!link || link.includes('REPLACE')) {
+            const priceId = STRIPE_PRICES[tierId];
+            if(!priceId || priceId.includes('REPLACE')) {
                 alert("Please configure your Stripe Link IDs in the code first.");
                 return;
             }
 
-            // Save the tier they are trying to buy to localStorage so we know what to give them on return
-            localStorage.setItem('pendingTier', tierId);
-
-            showToast(`Redirecting to ${tierId} plan...`);
+            showToast(`Loading secure checkout for ${tierId}...`);
             
-            // Redirect to Stripe
-            setTimeout(() => {
-                window.location.href = link;
-            }, 1000);
+            try {
+                // Call the Backend Function
+                const createStripeCheckout = functions.httpsCallable('createStripeCheckout');
+                
+                const result = await createStripeCheckout({
+                    priceId: priceId,
+                    tierName: tierId
+                });
+
+                // Redirect to the Stripe URL provided by the backend
+                window.location.href = result.data.url;
+
+            } catch (error) {
+                console.error("Checkout Error:", error);
+                showToast("Error: " + error.message);
+            }
         }
 
         // --- STANDARD APP LOGIC ---
