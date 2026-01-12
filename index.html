@@ -500,7 +500,26 @@
                 cat = "Electronic"; type = "Music";
             }
             
-            // RETURN THE OBJECT
+ // 1. Define webFiles FIRST
+        const webFiles = [
+             { id: 1, title: "Uplifting Tech Bed", artist: "Corporate Music", type: "Music", category: "Electronic", duration: "2:10", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+             { id: 2, title: "Lo-Fi Study Beat", artist: "Chillhop", type: "Music", category: "Electronic", duration: "1:30", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
+        ];
+
+        // 2. Map the R2 files
+        const r2Files = rawFiles.map((filename, index) => {
+            const clean = cleanTitle(filename);
+            const lower = filename.toLowerCase();
+            let cat = "Other", type = "SFX";
+
+            if (lower.includes("drum") || lower.includes("snare") || lower.includes("kick") || lower.includes("hihat") || lower.includes("perc")) {
+                cat = "Drums"; type = "SFX";
+            } else if (lower.includes("ambient") || lower.includes("ocean") || lower.includes("horror")) {
+                cat = "Ambient"; type = "SFX";
+            } else if (lower.includes("electronic") || lower.includes("synth") || lower.includes("beep")) {
+                cat = "Electronic"; type = "Music";
+            }
+
             return {
                 id: index + 100,
                 title: clean,
@@ -508,17 +527,12 @@
                 type: type,
                 category: cat,
                 duration: "--:--",
-                // This URL logic is correct!
                 url: `https://pub-a7b3a82a8703e3845f705eb8e6609e3a.r2.dev/${encodeURIComponent(filename)}`
             };
-        }); // <--- THIS WAS MISSING. It closes the map function.
+        });
 
-        const webFiles = [
-             { id: 1, title: "Uplifting Tech Bed", artist: "Corporate Music", type: "Music", category: "Electronic", duration: "2:10", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-             { id: 2, title: "Lo-Fi Study Beat", artist: "Chillhop", type: "Music", category: "Electronic", duration: "1:30", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
-        ];
-        
-        const fullLibrary = [...webFiles, ...library];
+        // 3. Combine them into the final library
+        const library = [...webFiles, ...r2Files];
 
         const categoriesByType = {
             'all': ['Riser', 'Techno', 'Electronic', 'Cinematic', 'Nature', 'Horror', 'Sci-Fi', 'Foley', 'Ambiance'],
