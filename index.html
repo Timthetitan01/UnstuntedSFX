@@ -495,18 +495,17 @@
             } else if (lower.includes("electronic") || lower.includes("synth") || lower.includes("modular") || lower.includes("glitch") || lower.includes("8-bit") || lower.includes("chip") || lower.includes("computer") || lower.includes("digital") || lower.includes("beep") || lower.includes("blip")) {
                 cat = "Electronic"; type = "Music";
             }
-
-          return {
-                id: index + 100,
-                title: clean,
-                artist: "Local Library",
-                type: type,
-                category: cat,
-                duration: "--:--",
-                // UPDATE THIS LINE:
-            url: `https://pub-a7b3a82a8703e3845f705eb8e6609e3a.r2.dev/${filename}`   
-          };
-        });
+        // Inside the library.map function...
+        return {
+            id: index + 100,
+            title: clean,
+            artist: "SonicLibrary", // Customized artist name
+            type: type,
+            category: cat,
+            duration: "--:--",
+            // ENCODE THE URL COMPONENT TO HANDLE SPACES CORRECTLY
+            url: `https://pub-a7b3a82a8703e3845f705eb8e6609e3a.r2.dev/${encodeURIComponent(filename)}`
+        };
 
         const webFiles = [
              { id: 1, title: "Uplifting Tech Bed", artist: "Corporate Music", type: "Music", category: "Electronic", duration: "2:10", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
@@ -780,13 +779,59 @@
             showToast(btn.classList.contains('liked') ? "Added to Library" : "Removed from Library");
         }
 
-        window.downloadItem = function(url, e) {
-            e.stopPropagation();
-            if(!state.user) { openModal('loginModal'); return; }
-            if(!state.isSubscribed) { openModal('pricingModal'); return; }
-            showToast("Asset downloading...");
-            window.open(url, '_blank');
-        }
+ window.downloadItem = async function(url, e) {
+    e.stopPropagation();
+
+    // 1. Auth & Subscription Checks
+    if(!state.user) { 
+        openModal('loginModal'); 
+        return; 
+    }
+    if(!state.isSubscribed) { 
+        openModal('pricingModal'); 
+        return; 
+    }
+
+    // 2. Show user feedback
+    const btn = e.currentTarget;
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 4v4m0 4v4"/></svg>`; // simple loading icon
+    showToast("Preparing download...");
+
+    try {
+        // 3. Fetch the file data
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const blob = await response.blob();
+        
+        // 4. Create a temporary link to force download
+        const blobUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        
+        // Extract filename from URL or default to 'audio.mp3'
+        const filename = url.split('/').pop() || 'download.mp3';
+        link.setAttribute('download', filename);
+        
+        document.body.appendChild(link);
+        link.click();
+        
+        // 5. Cleanup
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(blobUrl);
+        showToast("Download started!");
+
+    } catch (error) {
+        console.error("Download failed:", error);
+        showToast("Download failed. Check console.");
+        // Fallback: Open in new tab if fetch fails
+        window.open(url, '_blank');
+    } finally {
+        // Restore button icon
+        btn.innerHTML = originalContent;
+    }
+}
 
         function getIndex(id) { return fullLibrary.findIndex(t => t.id === id); }
 
