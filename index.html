@@ -587,7 +587,7 @@
         }
 
 // --- 3. SECURE CHECKOUT FUNCTION (PAYMENT LINK VERSION) ---
-        window.checkout = function(tierId) {
+window.checkout = function(tierId) {
             if(!state.user) {
                 alert("Please login first to subscribe.");
                 openModal('loginModal');
@@ -596,18 +596,15 @@
 
             const paymentLink = STRIPE_PRICES[tierId];
             
-            // Safety check to make sure you replaced the IDs
             if(!paymentLink || !paymentLink.startsWith('http')) {
-                alert("Stripe Payment Links are not configured yet. Please paste your buy.stripe.com links in the code.");
+                alert("Payment link missing. Check your STRIPE_PRICES config!");
                 return;
             }
 
             showToast(`Redirecting to Secure Checkout...`);
             
-            // Pass the user's email to Stripe so they don't have to re-type it
+            // This sends the user to Stripe and pre-fills their email
             const emailParam = `?prefilled_email=${encodeURIComponent(state.user.email)}`;
-            
-            // Send the user to Stripe
             window.location.href = paymentLink + emailParam;
         }
 
