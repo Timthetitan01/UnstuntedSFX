@@ -546,25 +546,43 @@
             updateAuthState(); 
         }
 
-        // Handle return from Stripe (Successful Payment)
+// Handle return from Stripe (Successful Payment)
         async function checkPaymentSuccess() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('success') === 'true' && auth.currentUser) {
-                showToast("Payment Successful! Verifying...");
+            if (urlParams.get('success') === 'true') {
                 
-                // Poll the database for the update (Webhook takes 2-3 seconds)
-                let attempts = 0;
-                const interval = setInterval(async () => {
-                    attempts++;
-                    await checkSubscriptionStatus(auth.currentUser.uid);
-                    
-                    if (state.isSubscribed || attempts > 5) {
-                        clearInterval(interval);
-                        // Clean URL
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        if(state.isSubscribed) showToast("Subscription Activated!");
+                // Wait for Firebase to know who is logged in
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        showToast("Payment Verified! Upgrading Account...");
+                        
+                        try {
+                            // 1. Save the "Premium" status to the user's document
+                            await db.collection('users').doc(user.uid).set({
+                                isPremium: true,
+                                tier: 'pro', // Default tier
+                                subscriptionEnd: Date.now() + (365 * 24 * 60 * 60 * 1000), // 1 year
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            }, { merge: true });
+
+                            // 2. Update the local state so the lock icons disappear immediately
+                            state.isSubscribed = true;
+                            updateAuthState();
+                            showToast("Upgrade Successful! Enjoy your downloads.");
+
+                            // 3. Clean the URL so it doesn't trigger again on refresh
+                            window.history.replaceState({}, document.title, window.location.pathname);
+
+                        } catch (error) {
+                            console.error("Error saving premium status:", error);
+                            showToast("Error upgrading account. Please contact support.");
+                        }
+                    } else {
+                        // If they aren't logged in, they can't be upgraded!
+                        showToast("Please login to claim your premium access.");
+                        openModal('loginModal');
                     }
-                }, 2000);
+                });
             }
         }
 
