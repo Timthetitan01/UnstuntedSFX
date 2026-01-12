@@ -495,14 +495,15 @@
                 cat = "Electronic"; type = "Music";
             }
 
-            return {
+          return {
                 id: index + 100,
                 title: clean,
                 artist: "Local Library",
                 type: type,
                 category: cat,
                 duration: "--:--",
-                url: `Risers/${filename}`
+                // UPDATE THIS LINE:
+                url: `https://pub-your-id-here.r2.dev/${filename}` 
             };
         });
 
