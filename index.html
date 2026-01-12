@@ -13,73 +13,77 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 
     <style>
-        /* --- DESIGN SYSTEM --- */
+        /* --- REDESIGN SYSTEM --- */
         :root {
-            --bg-body: #fbfbfd;
+            --bg-body: #f5f5f7;
             --bg-surface: #ffffff;
-            --bg-surface-hover: #f5f5f7;
+            --bg-surface-hover: #fbfbfd;
             --text-main: #1d1d1f;
-            --text-muted: #86868b;
-            --border: rgba(0,0,0,0.06);
+            --text-muted: #6e6e73;
+            --border: rgba(0,0,0,0.08);
             --accent: #0071e3;
-            --accent-glow: rgba(0, 113, 227, 0.3);
-            
-            --nav-height: 110px;
-            --radius: 14px;
-            --shadow: 0 4px 20px rgba(0,0,0,0.03);
-            --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+            --accent-glow: rgba(0, 113, 227, 0.15);
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 30px rgba(0,0,0,0.08);
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="dark"] {
-            --bg-body: #050505;
-            --bg-surface: #141416;
-            --bg-surface-hover: #1f1f22;
+            --bg-body: #000000;
+            --bg-surface: #121212;
+            --bg-surface-hover: #1c1c1e;
             --text-main: #f5f5f7;
-            --text-muted: #98989d;
-            --border: rgba(255,255,255,0.08);
+            --text-muted: #a1a1a6;
+            --border: rgba(255,255,255,0.12);
             --accent: #2997ff;
-            --accent-glow: rgba(41, 151, 255, 0.4);
-            --shadow: 0 4px 30px rgba(0,0,0,0.4);
+            --accent-glow: rgba(41, 151, 255, 0.25);
+            --shadow-md: 0 12px 40px rgba(0,0,0,0.5);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg-body);
             color: var(--text-main);
-            padding-bottom: 140px;
-            transition: background 0.3s ease, color 0.3s ease;
+            padding-bottom: 160px;
+            transition: background 0.4s ease;
             -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
         }
 
         /* --- HERO --- */
         .hero {
-            height: 220px;
-            background: radial-gradient(circle at top right, rgba(41, 151, 255, 0.1) 0%, transparent 40%),
+            height: 320px;
+            background: radial-gradient(circle at 70% 20%, var(--accent-glow) 0%, transparent 50%),
                         linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-body) 100%);
             display: flex; flex-direction: column; justify-content: center;
             padding: 0 2rem;
+            text-align: center;
         }
         
         .brand-large {
-            font-size: 3.5rem; font-weight: 800; letter-spacing: -0.04em;
-            background: linear-gradient(90deg, #2997ff, #db00ff, #2997ff);
-            background-size: 200% auto;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: clamp(2.5rem, 8vw, 5rem); 
+            font-weight: 800; 
+            letter-spacing: -0.05em;
+            background: linear-gradient(135deg, var(--text-main) 30%, var(--accent) 100%);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
             max-width: 1200px; margin: 0 auto; width: 100%;
-            animation: shine 5s linear infinite;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));
         }
-        @keyframes shine { to { background-position: 200% center; } }
 
-        /* --- STICKY NAV --- */
+        /* --- NAVIGATION --- */
         .sticky-nav {
             position: sticky; top: 0;
-            z-index: 100;
-            background: rgba(var(--bg-body), 0.85);
+            z-index: 1000;
+            background: rgba(var(--bg-body), 0.75);
             border-bottom: 1px solid var(--border);
-            padding: 1rem 0;
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            padding: 0.75rem 0;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
         }
         
         .nav-content {
@@ -90,161 +94,215 @@
         .top-row { display: flex; justify-content: space-between; align-items: center; }
 
         /* Auth Buttons */
-        .auth-actions { display: flex; gap: 10px; align-items: center; }
+        .auth-actions { display: flex; gap: 12px; align-items: center; }
         .btn-primary {
             background: var(--text-main); color: var(--bg-body); border: none;
-            padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;
-            cursor: pointer; transition: 0.2s var(--ease); display: flex; align-items: center; gap: 6px;
+            padding: 10px 20px; border-radius: 24px; font-weight: 600; font-size: 0.85rem;
+            cursor: pointer; transition: all 0.2s var(--ease); display: flex; align-items: center; gap: 8px;
         }
-        .btn-primary:hover { transform: scale(1.05); }
-        .btn-sub { background: var(--accent); color: white; }
-        .user-avatar { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: none; border: 2px solid var(--accent); object-fit: cover; }
-        .tier-tag { font-size: 0.75rem; font-weight: bold; color: var(--accent); border: 1px solid var(--accent); padding: 2px 8px; border-radius: 12px; display: none; margin-right: 10px; }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-sub { background: var(--accent); color: white; border: 1px solid transparent; }
+        
+        .user-avatar { 
+            width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: none; 
+            border: 2px solid var(--border); transition: 0.2s; padding: 2px;
+        }
+        .user-avatar:hover { border-color: var(--accent); transform: scale(1.1); }
+        
+        .tier-tag { 
+            font-size: 0.7rem; font-weight: 800; color: var(--accent); 
+            border: 1px solid var(--accent); padding: 3px 10px; border-radius: 8px; 
+            display: none; margin-right: 10px; letter-spacing: 0.05em; 
+        }
 
-        /* Filters */
-        .type-switcher { display: inline-flex; background: var(--bg-surface); padding: 4px; border-radius: 14px; border: 1px solid var(--border); }
-        .type-btn { padding: 8px 24px; border-radius: 10px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .type-btn.active { background: var(--text-main); color: var(--bg-body); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        /* Controls Redesign */
+        .type-switcher { 
+            display: inline-flex; background: var(--bg-surface-hover); 
+            padding: 4px; border-radius: 12px; border: 1px solid var(--border); 
+        }
+        .type-btn { 
+            padding: 8px 20px; border-radius: 9px; border: none; background: transparent; 
+            color: var(--text-muted); font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.9rem;
+        }
+        .type-btn.active { background: var(--bg-surface); color: var(--text-main); box-shadow: var(--shadow-sm); }
 
-        .sub-filters { display: flex; gap: 0.6rem; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
-        .sub-filters::-webkit-scrollbar { display: none; }
-        .chip { padding: 0.5rem 1.2rem; border-radius: 24px; font-size: 0.85rem; font-weight: 500; background: transparent; color: var(--text-muted); border: 1px solid var(--border); cursor: pointer; white-space: nowrap; transition: 0.2s; }
-        .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .sub-filters { 
+            display: flex; gap: 0.75rem; overflow-x: auto; padding: 4px 0 10px; 
+            scrollbar-width: none; mask-image: linear-gradient(to right, black 90%, transparent);
+        }
+        .chip { 
+            padding: 0.5rem 1.25rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; 
+            background: var(--bg-surface); color: var(--text-muted); border: 1px solid var(--border); 
+            cursor: pointer; white-space: nowrap; transition: 0.2s; 
+        }
+        .chip:hover { border-color: var(--text-muted); }
+        .chip.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 12px var(--accent-glow); }
 
-        /* --- LIST --- */
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        /* --- SEARCH & LIST --- */
+        .container { max-width: 1200px; margin: 3rem auto; padding: 0 2rem; }
 
-        .search-wrap { margin-bottom: 2rem; position: relative; max-width: 600px; }
-        .search-input { width: 100%; padding: 1rem 3rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; color: var(--text-main); font-size: 1rem; transition: 0.2s; }
-        .search-input:focus { outline: none; border-color: var(--accent); }
-        .search-icon { position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 20px; }
-        .clear-search { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: var(--bg-surface-hover); border: none; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); opacity: 0; pointer-events: none; transition: 0.2s; }
-        .search-input:not(:placeholder-shown) ~ .clear-search { opacity: 1; pointer-events: all; }
-
-        .track-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .search-wrap { margin-bottom: 2.5rem; position: relative; max-width: 500px; }
+        .search-input { 
+            width: 100%; padding: 1.1rem 3.5rem; background: var(--bg-surface); 
+            border: 1px solid var(--border); border-radius: 20px; color: var(--text-main); 
+            font-size: 1rem; transition: 0.3s var(--ease); box-shadow: var(--shadow-sm);
+        }
+        .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
+        .search-icon { position: absolute; left: 1.4rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 20px; pointer-events: none; }
+        
+        .track-list { display: flex; flex-direction: column; gap: 4px; }
 
         .track-row {
-            display: grid; grid-template-columns: 60px 3fr 1fr 80px 80px 100px;
-            align-items: center; background: transparent; border: 1px solid transparent;
-            border-bottom: 1px solid var(--border); padding: 0.8rem 1rem; border-radius: var(--radius); cursor: pointer; transition: all 0.2s var(--ease);
+            display: grid; grid-template-columns: 50px 2fr 120px 80px 100px 120px;
+            align-items: center; background: transparent; padding: 0.75rem 1rem; 
+            border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s var(--ease);
+            border-bottom: 1px solid var(--border);
         }
-        .track-row:hover { background: var(--bg-surface); transform: scale(1.005); box-shadow: 0 4px 12px rgba(0,0,0,0.05); z-index: 1; border-color: transparent; }
-        .track-row.playing { background: var(--bg-surface); border-color: var(--accent); }
+        .track-row:hover { background: var(--bg-surface); transform: translateX(4px); border-color: transparent; box-shadow: var(--shadow-sm); }
+        .track-row.playing { background: var(--bg-surface-hover); border-color: var(--accent-glow); }
         .track-row.playing h3 { color: var(--accent); }
 
-        .play-btn-small { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-surface-hover); border: 1px solid transparent; color: var(--text-main); display: flex; align-items: center; justify-content: center; transition: 0.2s; opacity: 0.7; cursor: pointer; }
-        .track-row:hover .play-btn-small { opacity: 1; background: var(--text-main); color: var(--bg-body); }
-        .track-row.playing .play-btn-small { opacity: 1; background: var(--accent); color: white; }
+        .play-btn-small { 
+            width: 34px; height: 34px; border-radius: 50%; background: var(--bg-surface-hover); 
+            border: 1px solid var(--border); color: var(--text-main); display: flex; 
+            align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; 
+        }
+        .track-row:hover .play-btn-small { background: var(--text-main); color: var(--bg-body); border-color: var(--text-main); }
+        .track-row.playing .play-btn-small { background: var(--accent); color: white; border-color: var(--accent); }
 
-        .track-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
-        .track-info span { font-size: 0.85rem; color: var(--text-muted); }
-        .badge { background: var(--bg-surface-hover); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
-        .meta { color: var(--text-muted); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+        .track-info h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 2px; }
+        .track-info span { font-size: 0.8rem; color: var(--text-muted); }
         
-        .col-action { display: flex; gap: 0.5rem; justify-content: flex-end; opacity: 0; transition: 0.2s; }
+        .badge { 
+            background: var(--bg-surface-hover); padding: 4px 10px; border-radius: 6px; 
+            font-size: 0.65rem; font-weight: 700; color: var(--text-muted); 
+            text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid var(--border);
+        }
+        .meta { color: var(--text-muted); font-size: 0.85rem; font-family: "SF Mono", monospace; }
+        
+        .col-action { display: flex; gap: 8px; justify-content: flex-end; opacity: 0.4; transition: 0.2s; }
         .track-row:hover .col-action { opacity: 1; }
         
-        .action-btn { width: 32px; height: 32px; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: relative; }
-        .action-btn:hover { background: var(--bg-surface-hover); color: var(--text-main); }
+        .action-btn { 
+            width: 36px; height: 36px; border-radius: 10px; border: 1px solid transparent; 
+            background: transparent; color: var(--text-muted); cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .action-btn:hover { background: var(--bg-surface-hover); color: var(--text-main); border-color: var(--border); }
         .action-btn.liked { color: #ff3b30; }
-        
-        /* Lock visual for non-subscribed */
-        .action-btn.locked::after { content: "🔒"; position: absolute; font-size: 10px; bottom: -2px; right: -2px; }
-        .action-btn.locked { opacity: 0.6; }
+        .action-btn.locked { opacity: 0.4; filter: grayscale(1); }
 
-        .visualizer { display: flex; align-items: center; gap: 3px; height: 24px; opacity: 0.5; }
+        /* Visualizer */
+        .visualizer { display: flex; align-items: center; gap: 3px; height: 20px; opacity: 0; transition: 0.3s; }
         .track-row.playing .visualizer { opacity: 1; }
-        .v-bar { width: 3px; background: var(--text-muted); border-radius: 2px; transition: height 0.2s; }
-        .track-row.playing .v-bar { background: var(--accent); animation: bounce 0.6s infinite ease-in-out alternate; }
-        @keyframes bounce { 0% { height: 4px; } 100% { height: 24px; } }
+        .v-bar { width: 3px; background: var(--accent); border-radius: 1px; }
 
         /* --- PLAYER BAR --- */
         .player-bar {
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(150%);
-            width: 95%; max-width: 900px;
-            background: rgba(20, 20, 22, 0.9); backdrop-filter: blur(50px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.15); border-radius: 24px; padding: 1.2rem 2rem;
-            display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.6); z-index: 500;
-            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(150px);
+            width: 92%; max-width: 800px;
+            background: rgba(20, 20, 22, 0.85); backdrop-filter: blur(30px) saturate(200%);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; padding: 1rem 1.5rem;
+            display: flex; flex-direction: column; box-shadow: var(--shadow-md); z-index: 2000;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        [data-theme="light"] .player-bar { background: rgba(255,255,255,0.9); border-color: rgba(0,0,0,0.1); }
+        [data-theme="light"] .player-bar { 
+            background: rgba(255, 255, 255, 0.85); 
+            border-color: rgba(0,0,0,0.05);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.1);
+        }
         .player-bar.active { transform: translateX(-50%) translateY(0); }
 
-        .player-top { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 0.8rem; }
-        .p-info { display: flex; align-items: center; gap: 1rem; flex: 1; }
-        .p-art { width: 48px; height: 48px; background: linear-gradient(135deg, #333, #111); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .p-text h4 { font-size: 1rem; margin-bottom: 3px; color: var(--text-main); }
-        .p-text span { font-size: 0.85rem; color: var(--text-muted); }
+        .player-top { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 0.5rem; }
+        .p-info { display: flex; align-items: center; gap: 1rem; min-width: 200px; }
+        .p-art { 
+            width: 44px; height: 44px; background: linear-gradient(135deg, #222, #000); 
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .p-text h4 { font-size: 0.9rem; margin-bottom: 1px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-text span { font-size: 0.75rem; color: var(--text-muted); }
         
-        .p-controls { display: flex; align-items: center; gap: 1.5rem; }
-        .btn-ctrl { background: none; border: none; color: var(--text-main); cursor: pointer; opacity: 0.7; transition: 0.2s; }
+        .p-controls { display: flex; align-items: center; gap: 1.25rem; }
+        .btn-ctrl { background: none; border: none; color: var(--text-main); cursor: pointer; opacity: 0.8; transition: 0.2s; }
         .btn-ctrl:hover { opacity: 1; transform: scale(1.1); }
-        .btn-play-lg { width: 56px; height: 56px; background: var(--text-main); color: var(--bg-body); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .btn-play-lg:hover { transform: scale(1.05); background: var(--accent); color: white; }
+        .btn-play-lg { 
+            width: 52px; height: 52px; background: var(--text-main); color: var(--bg-body); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
 
         .player-bottom { display: flex; align-items: center; gap: 1rem; width: 100%; }
-        .time-display { font-size: 0.75rem; color: var(--text-muted); min-width: 40px; }
-        input[type=range] { -webkit-appearance: none; background: transparent; cursor: pointer; height: 4px; border-radius: 2px; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: var(--text-main); margin-top: -4px; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--border); }
-        .seek-bar { flex: 1; } 
-        .vol-wrap { display: flex; align-items: center; gap: 0.5rem; width: 80px; }
-
-        /* --- MODAL (Common) --- */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
-            z-index: 2000; display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s;
-        }
-        .modal.open { display: flex; opacity: 1; }
+        .time-display { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; font-family: monospace; }
         
-        .modal-content {
-            background: var(--bg-surface); padding: 2rem; border-radius: 24px;
-            width: 90%; max-width: 400px; text-align: center;
+        input[type=range] { -webkit-appearance: none; background: transparent; cursor: pointer; flex: 1; height: 18px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--border); border-radius: 2px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: var(--text-main); margin-top: -4px; transition: 0.2s; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
+
+        /* --- PRICING REDESIGN --- */
+        .modal-pricing-content { max-width: 900px; padding: 3rem 2rem; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+        .price-card { 
+            border: 1px solid var(--border); border-radius: 24px; padding: 2rem; 
+            text-align: left; transition: 0.4s var(--ease); background: var(--bg-surface);
+            display: flex; flex-direction: column;
+        }
+        .price-card:hover { border-color: var(--accent); transform: translateY(-8px); box-shadow: var(--shadow-md); }
+        .price-card.popular { border: 2px solid var(--accent); position: relative; }
+        .pop-badge { 
+            position: absolute; top: -14px; left: 50%; transform: translateX(-50%); 
+            background: var(--accent); color: white; padding: 5px 14px; border-radius: 20px; 
+            font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+        }
+        .price-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-muted); }
+        .price-cost { font-size: 2.5rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--text-main); }
+        .price-cost span { font-size: 1rem; color: var(--text-muted); font-weight: 500; }
+        .feature-list { list-style: none; margin-bottom: 2rem; flex: 1; }
+        .feature-list li { margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+        .feature-list svg { color: var(--accent); flex-shrink: 0; }
+        
+        .btn-select-plan { 
+            width: 100%; padding: 14px; border-radius: 14px; border: none; 
+            font-weight: 700; cursor: pointer; transition: 0.2s; 
+            background: var(--bg-surface-hover); color: var(--text-main);
             border: 1px solid var(--border);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            transform: translateY(20px); transition: transform 0.3s;
-            position: relative;
         }
-        .modal.open .modal-content { transform: translateY(0); }
-        .modal h2 { margin-bottom: 0.5rem; }
-        .modal p { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem; }
-        
-        .google-btn {
-            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border);
-            background: var(--bg-surface); color: var(--text-main);
-            font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: 0.2s;
+        .price-card.popular .btn-select-plan { background: var(--accent); color: white; border: none; }
+
+        /* --- TOAST & UTILS --- */
+        .toast { 
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); 
+            background: var(--text-main); color: var(--bg-body); padding: 12px 24px; 
+            border-radius: 40px; font-weight: 600; font-size: 0.9rem; z-index: 9999; 
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
         }
-        .google-btn:hover { background: var(--bg-surface-hover); border-color: var(--text-muted); }
-        .close-modal { position: absolute; top: 1rem; right: 1rem; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; }
-
-        /* --- PRICING MODAL STYLES --- */
-        .modal-pricing-content { max-width: 900px; padding: 2.5rem; position: relative; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-        .price-card { border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; text-align: left; transition: 0.2s; position: relative; background: var(--bg-surface); }
-        .price-card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .price-card.popular { border: 2px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
-        .pop-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
-        .price-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .price-cost { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; display: block; }
-        .price-cost span { font-size: 0.9rem; font-weight: 400; color: var(--text-muted); }
-        .feature-list { list-style: none; margin-bottom: 1.5rem; }
-        .feature-list li { margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
-        .feature-list li svg { color: var(--accent); }
-        .btn-select-plan { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; background: var(--bg-surface-hover); color: var(--text-main); }
-        .price-card.popular .btn-select-plan { background: var(--accent); color: white; }
-        .btn-select-plan:hover { transform: scale(1.02); }
-
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--text-main); color: var(--bg-body); padding: 10px 20px; border-radius: 30px; font-weight: 600; z-index: 3000; transition: transform 0.4s; }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
+        /* --- MODAL --- */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4); 
+            backdrop-filter: blur(8px); z-index: 3000; display: none; 
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal.open { display: flex; animation: fadeIn 0.3s ease; }
+        .modal-content {
+            background: var(--bg-surface); border-radius: 32px; width: 100%; 
+            max-width: 440px; padding: 2.5rem; position: relative;
+            box-shadow: var(--shadow-md); border: 1px solid var(--border);
+            transform: scale(0.95); transition: 0.3s var(--ease);
+        }
+        .modal.open .modal-content { transform: scale(1); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
         @media (max-width: 768px) {
-            .track-row { grid-template-columns: 50px 1fr 50px; grid-template-areas: "play title action" "play meta action"; gap: 0 0.5rem; }
-            .col-play { grid-area: play; } .track-info { grid-area: title; }
-            .badge, .visualizer { display: none; } .col-meta { grid-area: meta; } .col-action { grid-area: action; opacity: 1; }
-            .hero { height: 180px; } .brand-large { font-size: 2.2rem; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .track-row { grid-template-columns: 50px 1fr 60px; grid-template-areas: "play info action"; gap: 0.5rem; }
+            .col-play { grid-area: play; } .track-info { grid-area: info; } .col-action { grid-area: action; opacity: 1; }
+            .col-meta, .visualizer { display: none; }
+            .nav-content { padding: 0 1rem; }
+            .player-bar { width: 95%; padding: 0.75rem 1rem; border-radius: 20px; bottom: 15px; }
             .vol-wrap { display: none; }
         }
     </style>
@@ -255,11 +313,11 @@
 
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('loginModal')">✕</span>
-            <h2>Sign in to SonicLibrary</h2>
-            <p>Access your pro assets, sync your favorites, and manage your subscription.</p>
-            <button class="google-btn" onclick="loginWithGoogle()">
-                <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.715H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+            <span class="close-modal" onclick="closeModal('loginModal')" style="position:absolute; top:20px; right:24px; cursor:pointer; font-size:1.5rem; color:var(--text-muted);">✕</span>
+            <h2 style="margin-bottom:12px; font-weight:800;">Welcome Back</h2>
+            <p style="color:var(--text-muted); margin-bottom:2rem; font-size:0.95rem;">Join thousands of creators using high-fidelity sonic assets.</p>
+            <button class="google-btn" onclick="loginWithGoogle()" style="width:100%; padding:14px; border-radius:16px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-main); font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px; transition:0.2s;">
+                <svg width="20" height="20" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.715H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
                 Continue with Google
             </button>
         </div>
@@ -267,40 +325,43 @@
 
     <div id="pricingModal" class="modal">
         <div class="modal-content modal-pricing-content">
-            <span class="close-modal" onclick="closeModal('pricingModal')">✕</span>
-            <h2>Unlock Full Access</h2>
-            <p>Choose the plan that fits your creative needs.</p>
+            <span class="close-modal" onclick="closeModal('pricingModal')" style="position:absolute; top:20px; right:24px; cursor:pointer; font-size:1.5rem; color:var(--text-muted);">✕</span>
+            <div style="text-align:center;">
+                <h2 style="font-size:2rem; font-weight:800; letter-spacing:-0.02em;">Unleash Your Sound</h2>
+                <p style="color:var(--text-muted); margin-top:8px;">Unlimited high-fidelity downloads and premium licensing.</p>
+            </div>
             
             <div class="pricing-grid">
                 <div class="price-card">
-                    <div class="price-title">Monthly</div>
+                    <div class="price-title">Starter</div>
                     <span class="price-cost">$3<span>/mo</span></span>
                     <ul class="feature-list">
-                        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 50 Downloads / mo</li>
-                        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Standard Quality (MP3)</li>
+                        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 50 Downloads / mo</li>
+                        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> MP3 Format</li>
                     </ul>
-                    <button class="btn-select-plan" onclick="checkout('starter')">Choose Monthly</button>
+                    <button class="btn-select-plan" onclick="checkout('starter')">Get Started</button>
                 </div>
 
                 <div class="price-card popular">
-                    <div class="pop-badge">Most Popular</div>
-                    <div class="price-title">Yearly</div>
+                    <div class="pop-badge">Best Value</div>
+                    <div class="price-title">Yearly Pro</div>
                     <span class="price-cost">$30<span>/yr</span></span>
                     <ul class="feature-list">
-                        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited Downloads</li>
-                        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> High Quality (WAV)</li>
+                        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Downloads</li>
+                        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Pro WAV Quality</li>
+                        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Commercial License</li>
                     </ul>
-                    <button class="btn-select-plan" onclick="checkout('pro')">Choose Yearly</button>
+                    <button class="btn-select-plan" onclick="checkout('pro')">Upgrade Now</button>
                 </div>
 
                 <div class="price-card">
                     <div class="price-title">Lifetime</div>
                     <span class="price-cost">$50<span>/once</span></span>
                     <ul class="feature-list">
-                        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Everything in Pro</li>
-                        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Stem Separation</li>
+                        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Lifetime Access</li>
+                        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Stem Separation</li>
                     </ul>
-                    <button class="btn-select-plan" onclick="checkout('ultimate')">Choose Lifetime</button>
+                    <button class="btn-select-plan" onclick="checkout('ultimate')">Get Lifetime</button>
                 </div>
             </div>
         </div>
@@ -309,26 +370,27 @@
     <div class="hero">
         <div class="brand-large">UNSTUNTED_SFX</div>
     </div>
+
     <div class="sticky-nav">
         <div class="nav-content">
             <div class="top-row">
                 <div class="type-switcher">
-                    <button class="type-btn active" onclick="updateType('all')">All</button>
+                    <button class="type-btn active" onclick="updateType('all')">All Library</button>
                     <button class="type-btn" onclick="updateType('Music')">Music</button>
                     <button class="type-btn" onclick="updateType('SFX')">SFX</button>
                 </div>
                 
                 <div class="auth-actions">
-                    <button class="btn-primary" id="loginBtn" onclick="openModal('loginModal')">Login</button>
+                    <button class="btn-primary" id="loginBtn" onclick="openModal('loginModal')">Sign In</button>
                     <button class="btn-primary btn-sub" id="subBtn" onclick="openModal('pricingModal')" style="display:none;">
-                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
                         Subscribe
                     </button>
                     <span id="tierTag" class="tier-tag">FREE</span>
                     <img id="avatar" class="user-avatar" src="" alt="User" title="Click to Logout">
                     
-                    <button class="play-btn-small" id="themeToggle" style="border:none; box-shadow: var(--shadow); background: var(--bg-surface);">
-                        <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.29-1.29zm1.41-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.29 1.29c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.29-1.29zM7.28 17.17c-.39-.39-1.02-.39-1.41 0a.996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.29-1.29z"/></svg>
+                    <button class="play-btn-small" id="themeToggle" style="border-radius:12px;">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.29-1.29zm1.41-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.29 1.29c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.29-1.29zM7.28 17.17c-.39-.39-1.02-.39-1.41 0a.996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.29-1.29z"/></svg>
                     </button>
                 </div>
             </div>
@@ -339,8 +401,8 @@
     <main class="container">
         <div class="search-wrap">
             <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-            <input type="text" class="search-input" id="searchInput" placeholder="Search library (e.g. 'alien', 'piano')...">
-            <button class="clear-search" id="clearSearch"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 19 17.59 13.41 12z"/></svg></button>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search by mood, gear, or category...">
+            <button class="clear-search" id="clearSearch" style="position: absolute; right: 1.2rem; top: 50%; transform: translateY(-50%); background: var(--bg-surface-hover); border: 1px solid var(--border); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); opacity: 0; pointer-events: none; transition: 0.2s;"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 19 17.59 13.41 12z"/></svg></button>
         </div>
 
         <div class="track-list" id="trackList"></div>
@@ -349,29 +411,28 @@
     <div class="player-bar" id="playerBar">
         <div class="player-top">
             <div class="p-info">
-                <div class="p-art"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/></svg></div>
-                <div class="p-text"><h4 id="pTitle">Select a track</h4><span id="pArtist">--</span></div>
+                <div class="p-art"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/></svg></div>
+                <div class="p-text"><h4 id="pTitle">Ready to play</h4><span id="pArtist">Select a sound</span></div>
             </div>
             <div class="p-controls">
                 <button class="btn-ctrl" onclick="playPrev()" title="Previous"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
-                <button class="btn-ctrl btn-play-lg" id="mainPlayBtn"><svg id="mainPlayIcon" width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+                <button class="btn-ctrl btn-play-lg" id="mainPlayBtn"><svg id="mainPlayIcon" width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
                 <button class="btn-ctrl" onclick="playNext()" title="Next"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+            </div>
+            <div class="vol-wrap" style="display:flex; align-items:center; gap:0.75rem; min-width:120px; justify-content:flex-end;">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="color:var(--text-muted);"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+                <input type="range" id="volBar" min="0" max="1" step="0.1" value="1" style="width:70px;">
             </div>
         </div>
         <div class="player-bottom">
             <span class="time-display" id="timeCurrent">0:00</span>
             <input type="range" class="seek-bar" id="seekBar" value="0" min="0" max="100">
             <span class="time-display" id="timeTotal">0:00</span>
-            <div class="vol-wrap">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-                <input type="range" id="volBar" min="0" max="1" step="0.1" value="1">
-            </div>
         </div>
     </div>
 
     <script>
         // --- 1. CONFIGURATION ---
-        // ⚠️ REPLACE THE QUOTES BELOW WITH YOUR STRIPE PAYMENT LINK URLs
         const STRIPE_PRICES = {
             'starter': 'https://buy.stripe.com/test_4gMbJ31wK78Q76M9Xd6Zy05', 
             'pro': 'https://buy.stripe.com/test_your_yearly_link...',      
@@ -388,13 +449,12 @@
             measurementId: "G-3HLZ3Q8ZEM"
         };
         
-        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const functions = firebase.functions(); // Initialize Cloud Functions
+        const functions = firebase.functions();
 
         // --- HELPERS ---
         function cleanTitle(filename) {
@@ -416,7 +476,6 @@
             let cat = "SFX";
 
             const lower = filename.toLowerCase();
-            // Categorization Rule Engine
             if (lower.includes("riser") || lower.includes("intro") || lower.includes("build") || lower.includes("whoosh") || lower.includes("transition") || lower.includes("swoosh") || lower.includes("reverse")) {
                 cat = "Riser"; type = "SFX";
             } else if (lower.includes("music") || lower.includes("orchestra") || lower.includes("piano") || lower.includes("guitar") || lower.includes("song") || lower.includes("beat") || lower.includes("loop") || lower.includes("tekno") || lower.includes("techno") || lower.includes("melody") || lower.includes("tune") || lower.includes("rhapsody") || lower.includes("symphony") || lower.includes("midi") || lower.includes("chord")) {
@@ -495,18 +554,14 @@
             renderList();
             setupEvents();
             preloadDurations();
-
-            // 1. Check for Stripe Success Return
             checkPaymentSuccess();
 
-            // 2. Listen for Auth State Changes
             auth.onAuthStateChanged(async (user) => {
                 state.user = user;
                 if(user) {
                     await checkSubscriptionStatus(user.uid);
                     showToast(`Welcome, ${user.displayName || 'User'}`);
                     closeModal('loginModal');
-                    
                     if(!state.isSubscribed) {
                         setTimeout(() => openModal('pricingModal'), 1500);
                     }
@@ -518,97 +573,67 @@
             });
         }
 
-        // --- 2. FIRESTORE & AUTH LOGIC ---
-
-        // Check user's subscription in Firestore
         async function checkSubscriptionStatus(uid) {
             try {
                 const docRef = db.collection('users').doc(uid);
                 const doc = await docRef.get();
-                
                 if (doc.exists) {
                     const data = doc.data();
                     const now = Date.now();
-                    
                     if (data.isPremium && data.subscriptionEnd > now) {
                         state.isSubscribed = true;
                         state.subscriptionTier = data.tier;
                         state.subscriptionEnd = data.subscriptionEnd;
-                        console.log(`User has active ${data.tier} subscription until ${new Date(data.subscriptionEnd)}`);
                     } else {
                         state.isSubscribed = false;
                         state.subscriptionTier = null;
                     }
                 }
-            } catch (error) {
-                console.error("Error fetching subscription:", error);
-            }
+            } catch (error) { console.error("Error fetching subscription:", error); }
             updateAuthState(); 
         }
 
-// Handle return from Stripe (Successful Payment)
         async function checkPaymentSuccess() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('success') === 'true') {
-                
-                // Wait for Firebase to know who is logged in
                 auth.onAuthStateChanged(async (user) => {
                     if (user) {
                         showToast("Payment Verified! Upgrading Account...");
-                        
                         try {
-                            // 1. Save the "Premium" status to the user's document
                             await db.collection('users').doc(user.uid).set({
                                 isPremium: true,
-                                tier: 'pro', // Default tier
-                                subscriptionEnd: Date.now() + (365 * 24 * 60 * 60 * 1000), // 1 year
+                                tier: 'pro',
+                                subscriptionEnd: Date.now() + (365 * 24 * 60 * 60 * 1000),
                                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                             }, { merge: true });
-
-                            // 2. Update the local state so the lock icons disappear immediately
                             state.isSubscribed = true;
                             updateAuthState();
                             showToast("Upgrade Successful! Enjoy your downloads.");
-
-                            // 3. Clean the URL so it doesn't trigger again on refresh
                             window.history.replaceState({}, document.title, window.location.pathname);
-
-                        } catch (error) {
-                            console.error("Error saving premium status:", error);
-                            showToast("Error upgrading account. Please contact support.");
-                        }
+                        } catch (error) { showToast("Error upgrading account."); }
                     } else {
-                        // If they aren't logged in, they can't be upgraded!
-                        showToast("Please login to claim your premium access.");
+                        showToast("Please login to claim your access.");
                         openModal('loginModal');
                     }
                 });
             }
         }
 
-// --- 3. SECURE CHECKOUT FUNCTION (PAYMENT LINK VERSION) ---
-window.checkout = function(tierId) {
+        window.checkout = function(tierId) {
             if(!state.user) {
                 alert("Please login first to subscribe.");
                 openModal('loginModal');
                 return;
             }
-
             const paymentLink = STRIPE_PRICES[tierId];
-            
             if(!paymentLink || !paymentLink.startsWith('http')) {
-                alert("Payment link missing. Check your STRIPE_PRICES config!");
+                alert("Payment link missing.");
                 return;
             }
-
             showToast(`Redirecting to Secure Checkout...`);
-            
-            // This sends the user to Stripe and pre-fills their email
             const emailParam = `?prefilled_email=${encodeURIComponent(state.user.email)}`;
             window.location.href = paymentLink + emailParam;
         }
-
-        // --- STANDARD APP LOGIC ---
 
         window.openModal = function(id) { 
             const m = document.getElementById(id);
@@ -621,8 +646,7 @@ window.checkout = function(tierId) {
         
         window.loginWithGoogle = function() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .catch((error) => { showToast("Login Failed: " + error.message); });
+            auth.signInWithPopup(provider).catch((error) => { showToast("Login Failed"); });
         }
 
         window.logout = function() {
@@ -644,7 +668,6 @@ window.checkout = function(tierId) {
                 avatar.style.display = 'block';
                 avatar.src = state.user.photoURL || "https://ui-avatars.com/api/?name=User";
                 avatar.onclick = () => { if(confirm("Log out?")) logout(); };
-                
                 if (state.isSubscribed) {
                     subBtn.style.display = 'none';
                     tierTag.style.display = 'inline-block';
@@ -666,7 +689,7 @@ window.checkout = function(tierId) {
             state.activeType = type;
             state.activeCategory = 'all';
             document.querySelectorAll('.type-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.innerText === type || (type === 'all' && btn.innerText === 'All'));
+                btn.classList.toggle('active', btn.innerText.includes(type) || (type === 'all' && btn.innerText.includes('All')));
             });
             renderSubFilters();
             renderList();
@@ -682,7 +705,7 @@ window.checkout = function(tierId) {
             els.subFilters.innerHTML = '';
             const allBtn = document.createElement('button');
             allBtn.className = `chip ${state.activeCategory === 'all' ? 'active' : ''}`;
-            allBtn.innerText = 'View All';
+            allBtn.innerText = 'All Collections';
             allBtn.onclick = () => updateCategory('all');
             els.subFilters.appendChild(allBtn);
 
@@ -706,7 +729,7 @@ window.checkout = function(tierId) {
             });
 
             if(!filtered.length) {
-                els.list.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted);">No sounds found.</div>`;
+                els.list.innerHTML = `<div style="text-align:center; padding:5rem; color:var(--text-muted);">No matching sounds in the current collection.</div>`;
                 return;
             }
 
@@ -714,13 +737,11 @@ window.checkout = function(tierId) {
                 const row = document.createElement('div');
                 const isCur = state.playingId === t.id;
                 row.className = `track-row ${isCur && state.isPlaying ? 'playing' : ''}`;
-                row.onclick = (e) => { 
-                    if(!e.target.closest('button')) playTrack(t.id); 
-                };
+                row.onclick = (e) => { if(!e.target.closest('button')) playTrack(t.id); };
 
                 const playIcon = isCur && state.isPlaying 
-                    ? '<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' 
-                    : '<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+                    ? '<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' 
+                    : '<svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
 
                 const isLocked = !state.user || !state.isSubscribed;
                 const lockClass = isLocked ? 'locked' : '';
@@ -736,14 +757,14 @@ window.checkout = function(tierId) {
                     <div class="col-meta"><span class="badge">${t.category}</span></div>
                     <div class="col-meta meta" id="dur-${t.id}">${t.duration}</div>
                     <div class="visualizer">
-                        ${Array.from({length: 12}).map(() => `<div class="v-bar" style="height: ${Math.floor(Math.random() * 16 + 4)}px; animation-duration:${0.4 + Math.random()}s"></div>`).join('')}
+                        ${Array.from({length: 8}).map(() => `<div class="v-bar" style="height: ${Math.floor(Math.random() * 12 + 4)}px; animation: bounce ${0.4 + Math.random()}s infinite ease-in-out alternate"></div>`).join('')}
                     </div>
                     <div class="col-action">
-                        <button class="action-btn" onclick="toggleLike(this, event)" title="Like">
+                        <button class="action-btn" onclick="toggleLike(this, event)" title="Favorite">
                             <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                         </button>
                         <button class="action-btn ${lockClass}" onclick="downloadItem('${t.url}', event)" title="Download">
-                            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                            ${isLocked ? '<svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>' : '<svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>'}
                         </button>
                     </div>
                 `;
@@ -754,20 +775,14 @@ window.checkout = function(tierId) {
         window.toggleLike = function(btn, e) {
             e.stopPropagation();
             btn.classList.toggle('liked');
-            showToast(btn.classList.contains('liked') ? "Added to Favorites" : "Removed from Favorites");
+            showToast(btn.classList.contains('liked') ? "Added to Library" : "Removed from Library");
         }
 
         window.downloadItem = function(url, e) {
             e.stopPropagation();
-            if(!state.user) {
-                openModal('loginModal');
-                return;
-            }
-            if(!state.isSubscribed) {
-                openModal('pricingModal'); 
-                return;
-            }
-            showToast("Starting Download...");
+            if(!state.user) { openModal('loginModal'); return; }
+            if(!state.isSubscribed) { openModal('pricingModal'); return; }
+            showToast("Asset downloading...");
             window.open(url, '_blank');
         }
 
@@ -789,20 +804,14 @@ window.checkout = function(tierId) {
 
         function playTrack(id) {
             const track = fullLibrary.find(t => t.id === id);
-            
             if(state.playingId === id) {
-                if(state.isPlaying) {
-                    audio.pause();
-                    state.isPlaying = false;
-                } else {
-                    audio.play();
-                    state.isPlaying = true;
-                }
+                if(state.isPlaying) { audio.pause(); state.isPlaying = false; } 
+                else { audio.play(); state.isPlaying = true; }
             } else {
                 state.playingId = id;
                 state.isPlaying = true;
                 audio.src = track.url;
-                audio.play().catch(e => { console.warn(e); showToast("Error: File not found"); });
+                audio.play().catch(e => { showToast("File unavailable"); });
                 els.pTitle.innerText = track.title;
                 els.pArtist.innerText = track.artist;
                 els.playerBar.classList.add('active');
@@ -812,12 +821,7 @@ window.checkout = function(tierId) {
 
         function updateUI() {
             renderList();
-            if(state.isPlaying) els.playerBar.classList.add('playing');
-            else els.playerBar.classList.remove('playing');
-            
-            const icon = state.isPlaying 
-                ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
-                : '<path d="M8 5v14l11-7z"/>';
+            const icon = state.isPlaying ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>' : '<path d="M8 5v14l11-7z"/>';
             els.mainPlayIcon.innerHTML = icon;
         }
 
@@ -842,7 +846,7 @@ window.checkout = function(tierId) {
         function showToast(msg) {
             els.toast.innerText = msg;
             els.toast.classList.add('show');
-            setTimeout(() => els.toast.classList.remove('show'), 2000);
+            setTimeout(() => els.toast.classList.remove('show'), 3000);
         }
 
         function setupEvents() {
@@ -856,25 +860,20 @@ window.checkout = function(tierId) {
                     const tm = Math.floor(audio.duration/60);
                     const ts = Math.floor(audio.duration%60);
                     els.timeTotal.innerText = `${tm}:${ts<10?'0':''}${ts}`;
-                    els.seekBar.style.background = `linear-gradient(to right, var(--text-main) ${pct}%, var(--border) ${pct}%)`;
                 }
             });
             audio.addEventListener('ended', () => { state.isPlaying = false; updateUI(); });
-            
             els.seekBar.addEventListener('input', (e) => { audio.currentTime = (e.target.value / 100) * audio.duration; });
             els.volBar.addEventListener('input', (e) => { audio.volume = e.target.value; });
-            
-            const clearBtn = document.getElementById('clearSearch');
             els.searchInput.addEventListener('input', (e) => {
                 state.search = e.target.value.toLowerCase();
                 renderList();
             });
-            clearBtn.addEventListener('click', () => {
+            document.getElementById('clearSearch').addEventListener('click', () => {
                 els.searchInput.value = '';
                 state.search = '';
                 renderList();
             });
-
             document.getElementById('mainPlayBtn').addEventListener('click', () => { if(state.playingId) playTrack(state.playingId); });
             document.getElementById('themeToggle').addEventListener('click', () => {
                 const html = document.documentElement;
