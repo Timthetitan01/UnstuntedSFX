@@ -496,16 +496,22 @@
                 cat = "Electronic"; type = "Music";
             }
         // Inside the library.map function...
-        return {
-            id: index + 100,
-            title: clean,
-            artist: "SonicLibrary", // Customized artist name
-            type: type,
-            category: cat,
-            duration: "--:--",
-            // ENCODE THE URL COMPONENT TO HANDLE SPACES CORRECTLY
-            url: `https://pub-a7b3a82a8703e3845f705eb8e6609e3a.r2.dev/${encodeURIComponent(filename)}`
-        };
+} else if (lower.includes("electronic") || lower.includes("synth") || lower.includes("modular") || lower.includes("glitch") || lower.includes("8-bit") || lower.includes("chip") || lower.includes("computer") || lower.includes("digital") || lower.includes("beep") || lower.includes("blip")) {
+                cat = "Electronic"; type = "Music";
+            }
+            
+            // RETURN THE OBJECT
+            return {
+                id: index + 100,
+                title: clean,
+                artist: "SonicLibrary",
+                type: type,
+                category: cat,
+                duration: "--:--",
+                // This URL logic is correct!
+                url: `https://pub-a7b3a82a8703e3845f705eb8e6609e3a.r2.dev/${encodeURIComponent(filename)}`
+            };
+        }); // <--- THIS WAS MISSING. It closes the map function.
 
         const webFiles = [
              { id: 1, title: "Uplifting Tech Bed", artist: "Corporate Music", type: "Music", category: "Electronic", duration: "2:10", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
