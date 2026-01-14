@@ -243,9 +243,9 @@
 
         /* --- PRICING REDESIGN (FIXED & EVEN) --- */
         .modal-pricing-content { 
-            max-width: 3000px; /* Force wide width */
+            max-width: 1200px; /* Wide format */
             width: 95%;        
-            padding: 40px; 
+            padding: 50px 40px; 
             background: var(--bg-body);
             border: 1px solid var(--border);
             overflow: visible; 
@@ -268,7 +268,7 @@
             grid-template-columns: repeat(3, 1fr); /* 3 Equal Columns */
             gap: 2rem; 
             margin-top: 1rem; 
-            align-items: stretch; /* Make all cards same height */
+            align-items: stretch; /* Forces equal height */
             position: relative; z-index: 2;
         }
 
@@ -281,16 +281,16 @@
         }
         .price-card:hover { transform: translateY(-5px); border-color: var(--text-muted); }
 
-        /* The Popular Card - NO SCALING */
+        /* The Popular Card - FIXED (No Zoom) */
         .price-card.popular {
             background: var(--bg-surface); 
-            border: 2px solid var(--accent); /* Blue border to highlight instead of size */
+            border: 2px solid var(--accent); /* Highlights with color, not size */
             box-shadow: 0 0 40px var(--accent-glow);
             z-index: 1;
             padding: 2rem; 
-            transform: none !important; /* Forces it to stay same size */
+            transform: none; /* Explicitly prevents scaling */
         }
-        .price-card.popular:hover { transform: translateY(-5px) !important; }
+        .price-card.popular:hover { transform: translateY(-5px); }
 
         .pop-badge {
             position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
