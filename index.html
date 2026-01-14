@@ -242,14 +242,21 @@
         input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 
 /* 1. The Extended Background */
+/* --- FIXED & FORCED WIDTH --- */
 .modal-pricing-content {
-    max-width: 1250px; /* Increased width to let cards breathe */
-    width: 95%;        /* Responsive width */
-    padding: 60px;     /* Large padding extends the background visually */
+    max-width: 1250px !important; 
+    width: 95% !important;        
+    
+    padding: 60px;
     background: var(--bg-body);
     border: 1px solid var(--border);
-    border-radius: 12px; /* Squared aesthetic */
-    overflow: visible;   /* Allows badges/shadows to pop out */
+    border-radius: 12px;
+    overflow: visible;
+    
+    margin: 20px auto; 
+    position: relative;
+    height: auto;
+}
     
     /* Layout centering */
     margin: 20px auto; 
