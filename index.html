@@ -558,17 +558,14 @@
                         type: meta.type,
                         category: meta.cat,
                         duration: "--:--",
-                        url: `${R2_PUBLIC_URL}/${encodeURIComponent(filename)}`
+                        // USE encodeURI TO FIX SPACES BUT KEEP SLASHES
+                        url: `${R2_PUBLIC_URL}/${encodeURI(filename)}`
                     };
                 });
 
-                // 3. Add static web files (Optional)
-                const webFiles = [
-                     { id: 1, title: "Uplifting Tech Bed", artist: "Corporate Music", type: "Music", category: "Electronic", duration: "2:10", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-                     { id: 2, title: "Lo-Fi Study Beat", artist: "Chillhop", type: "Music", category: "Electronic", duration: "1:30", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
-                ];
-
-                fullLibrary = [...webFiles, ...r2Tracks];
+                // 3. REMOVED THE HARDCODED WEBFILES HERE
+                // This ensures we only show files that we have permission to download (R2)
+                fullLibrary = [...r2Tracks];
                 
                 renderList();
                 preloadDurations();
