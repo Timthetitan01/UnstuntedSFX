@@ -242,145 +242,165 @@
         input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 
 /* 1. The Extended Background */
-/* --- FIXED & FORCED WIDTH --- */
+/* --- PRICING REDESIGN (THEMED & FIXED) --- */
+
+/* 1. The Container: Glassmorphism Style */
 .modal-pricing-content {
+    /* FORCE WIDTH FIX */
     max-width: 1250px !important; 
     width: 95% !important;        
     
     padding: 60px;
-    background: var(--bg-body);
+    
+    /* THEME: Glass Effect (Matches Player Bar) */
+    background: rgba(18, 18, 18, 0.85); /* Semi-transparent dark */
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    
     border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: visible;
+    border-radius: 24px; /* Matches site's rounded look */
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6); /* Deep shadow */
     
     margin: 20px auto; 
     position: relative;
     height: auto;
-}
-    
-    /* Layout centering */
-    margin: 20px auto; 
-    position: relative;
-    height: auto;      /* grow with content */
+    overflow: visible;
 }
 
 /* 2. Header */
 .pricing-header {
     text-align: center;
-    margin-bottom: 3rem; /* More space below header */
+    margin-bottom: 3.5rem;
     position: relative; z-index: 2;
 }
 .pricing-header h2 {
     font-size: 2.5rem; 
     font-weight: 800;
-    color: var(--text-main);
+    /* THEME: Gradient Text */
+    background: linear-gradient(135deg, var(--text-main) 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin-bottom: 0.5rem;
 }
 
 /* 3. The Grid */
 .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 Equal Columns */
-    gap: 2rem;            /* Increased gap for cleaner look */
-    align-items: stretch; /* Forces exact equal height */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    align-items: stretch;
     position: relative; z-index: 2;
 }
 
 /* 4. The Cards */
 .price-card {
+    /* THEME: Surface colors */
     background: var(--bg-surface);
     border: 1px solid var(--border); 
-    border-radius: 8px; /* Very Squared */
-    padding: 2rem;      /* Increased padding inside cards */
+    border-radius: var(--radius-lg); /* 18px */
+    padding: 2.5rem 2rem;
     display: flex; 
     flex-direction: column; 
     position: relative;
-    transition: all 0.2s ease;
-    height: 100%;       /* Fills the grid height */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .price-card:hover { 
     border-color: var(--text-muted); 
-    transform: translateY(-4px);
+    transform: translateY(-8px); /* Smooth lift */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-/* The Popular Card */
+/* 5. The Popular Card (Glowing) */
 .price-card.popular {
-    background: var(--bg-surface);
-    border: 2px solid var(--accent); 
-    box-shadow: 0 8px 30px var(--accent-glow);
+    /* THEME: Subtle tint instead of hard border */
+    background: linear-gradient(180deg, rgba(41, 151, 255, 0.08) 0%, var(--bg-surface) 100%);
+    border: 1px solid var(--accent); 
+    box-shadow: 0 0 50px var(--accent-glow);
     z-index: 1;
+    transform: scale(1.02); /* Slight pop */
+}
+.price-card.popular:hover {
+    transform: scale(1.02) translateY(-8px);
 }
 
 .pop-badge {
-    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-    background: var(--accent); color: white; padding: 5px 14px; 
-    border-radius: 4px; 
-    font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-    box-shadow: 0 2px 10px var(--accent-glow); white-space: nowrap;
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: white; padding: 6px 16px; 
+    border-radius: 20px; /* Pill shape matches badges */
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    box-shadow: 0 4px 15px var(--accent-glow); white-space: nowrap;
 }
 
+/* Typography & Icons */
 .price-title {
-    font-size: 1.1rem; font-weight: 700; color: var(--text-main);
-    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;
+    font-size: 0.9rem; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;
     text-align: center;
 }
 
 .price-cost {
     display: flex; align-items: baseline; justify-content: center;
-    font-size: 3rem; font-weight: 800;
+    font-size: 3.5rem; font-weight: 800;
     color: var(--text-main); margin-bottom: 2rem; line-height: 1;
+    letter-spacing: -1px;
 }
-.price-cost .currency { font-size: 1.5rem; vertical-align: top; margin-right: 2px; }
-.price-cost .period { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; margin-left: 6px; }
+.price-cost .currency { font-size: 1.5rem; margin-right: 4px; color: var(--text-muted); }
+.price-cost .period { font-size: 1rem; color: var(--text-muted); font-weight: 500; margin-left: 6px; }
 
-/* Features */
 .feature-list { 
-    list-style: none; 
-    margin-bottom: 2.5rem; 
-    padding: 0; 
-    flex-grow: 1; 
+    list-style: none; margin-bottom: 2.5rem; padding: 0; flex-grow: 1; 
 }
 .feature-list li {
-    margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-muted);
-    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 1.2rem; font-size: 0.95rem; color: var(--text-muted);
+    display: flex; align-items: center; gap: 14px;
 }
 .feature-list li svg {
     color: var(--accent); flex-shrink: 0;
     width: 20px; height: 20px;
+    filter: drop-shadow(0 0 5px var(--accent-glow)); /* Glowing icons */
 }
+.feature-list li span { font-weight: 500; }
 
 /* Buttons */
 .btn-select-plan {
-    width: 100%; padding: 14px; 
-    border-radius: 6px; 
+    width: 100%; padding: 16px; 
+    border-radius: 14px; 
     border: 1px solid var(--border);
-    font-weight: 700; cursor: pointer; font-size: 0.95rem; transition: 0.2s;
-    background: var(--bg-surface-hover); color: var(--text-main); 
+    font-weight: 600; cursor: pointer; font-size: 1rem; transition: 0.2s;
+    background: rgba(255,255,255,0.05); color: var(--text-main); 
     margin-top: auto; 
 }
-.btn-select-plan:hover { background: var(--border); }
+.btn-select-plan:hover { 
+    background: var(--text-main); 
+    color: var(--bg-body); 
+    border-color: var(--text-main);
+}
 
 .price-card.popular .btn-select-plan {
     background: var(--accent); color: white; border: none;
+    box-shadow: 0 4px 20px var(--accent-glow);
 }
-.price-card.popular .btn-select-plan:hover { opacity: 0.9; }
+.price-card.popular .btn-select-plan:hover { 
+    opacity: 1; 
+    background: #40a0ff; /* Slightly lighter accent */
+    box-shadow: 0 8px 30px var(--accent-glow); 
+    transform: translateY(-2px);
+}
 
-/* 5. CRITICAL: Mobile Responsiveness */
-/* Without this, "Making it fit" is impossible on small screens */
+/* Mobile Responsiveness */
 @media (max-width: 1000px) {
     .pricing-grid {
-        grid-template-columns: 1fr; /* Stack cards vertically */
-        max-width: 500px; /* Limit width when stacked */
+        grid-template-columns: 1fr; 
+        max-width: 500px; 
         margin: 0 auto;
     }
     .modal-pricing-content {
-        padding: 30px 20px; /* Less padding on mobile */
-        max-width: 95%;
+        padding: 40px 24px;
+        width: 95% !important;
     }
-    .price-card {
-        min-height: auto;
-    }
+    .price-card.popular { transform: none; }
+    .price-card.popular:hover { transform: translateY(-5px); }
 }
 
         /* --- TOAST & UTILS --- */
