@@ -433,6 +433,12 @@
 
     <script>
         // --- 1. CONFIGURATION ---
+        // !!! PASTE YOUR CLOUDFLARE WORKER URL HERE !!!
+        const WORKER_URL = "https://sonic-library-api.unstuntedyt.workers.dev"; 
+        
+        // Your R2 Public Bucket URL
+        const R2_PUBLIC_URL = "https://pub-5b2715d43ab24b93979acc13060553d9.r2.dev";
+
         const STRIPE_PRICES = {
             'starter': 'https://buy.stripe.com/test_4gMbJ31wK78Q76M9Xd6Zy05', 
             'pro': 'https://buy.stripe.com/test_your_yearly_link...',      
@@ -466,22 +472,18 @@
             return name;
         }
 
-        
-        const rawFiles = [
-            "10_note_guitar_chord_arpeggios_(dissonant_and_e_major_in_harmony).mp3", "120bpm_pannaner2_tr.wav.mp3","120bpm1lambda8sd.wav.mp3","120bpm3lambda8sd.wav.mp3","120bpmmu12sd.wav.mp3","120bpmnu6sd.wav.mp3","15jun2020_modbox_sample_recording.mp3","171207ambientloop.wav.mp3","192_bpm_industrial_drum_loop_#15502_(wav).mp3","2_slick_4_u.wav.mp3","2016-10-11-dr-60-ocean_waves-edited.wav.mp3","20180426_sliding_on_wet_glass.wav.mp3","20180429_squeezing_a_big,_wet_sponge.wav.mp3","2021_cupsule_sound_1.wav.mp3","5_cell_quantussy_patch_vcv-rack.wav.mp3","547966_-_snare_metal_-_(+eq).mp3","72_bpm_industrial_horror_loop_#15476_(wav).mp3","a_double_krell.wav.mp3","a_lot_of_bleeps_bloops_blurb_in_one_file.wav.mp3","a_strange_fx_02.wav.mp3","a_strange_fx_03.wav.mp3","a4.wav.mp3","absolute_disturbance_loop.wav.mp3","accidental_acid_sounds.mp3.mp3","ahhh.wav","Alien Riser.wav","alien_ambient.mp3","alien_cackle.mp3","alien_com1.wav.mp3","alien_machinery.wav.mp3","alien_tv_transmission.wav.mp3","alien.wav.mp3","analog_delay_overdrive.mp3","angry_cat_sounds_without_any_cat_being_hurt.mp3","angry_hooded_crow_(hoodie)_(corvus_cornix).mp3","another_dark_drone.mp3","anu_crash_07.wav.mp3","ao_subtractor_snare_2_6.wav.mp3","approaching_jupiter.mp3","atlantic_spotted_dolphins_off_the_coast_of_la_gomera,_canary_islands.mp3","atmo_vocal_choir_drone_synth_dark_thriller_sad_mood_cinematic.wav.mp3","bacteria_music.mp3","Bass Dancing.wav","bass_98_gm_woodbass.mp3","bassguitar_115_c_introbass.mp3","beep-00.wav","beep-01.wav","beep-02.wav","beep-03.wav","beep-04.wav","beep-05.wav","beep-06.wav","beep-07.wav","beep-08.wav","beep-09.wav","beep-10.wav","beep-11.wav","beep-12.wav","beep-13.wav","beep-14.wav","beep-15.wav","belive.wav.mp3","bell_01.ogg","bell_02.ogg","bell_03.ogg","Big Swoosh 1.wav","big_noise.mp3","biggish_saw_synth_e_e_g_b_102_bpm-14.wav.mp3","biggish_saw_synth_e_e_g_b_102_bpm-24.wav.mp3","bike_crash_medley.wav.mp3","bird_call_-_melodic_leaf_hunter_(ffr).mp3","birdchirp.wav","birdchirp2.wav","birdchirp3.wav","birdchirp4.wav","birdchirp5.wav","Birds Singing.wav","blackend_butter_140.wav.mp3","blast.wav","blastoff.wav","blind_patching.wav.mp3","blunk.wav","bonus.wav","bottles.wav.mp3","bounce.wav","Bouncy.wav","breaking_glass_.mp3","brittle_wooden_box_landing_on_floor_2.mp3","bubbles.wav","burn_the_disco_down_130bpm.wav.mp3","bwah.wav","cant_find_a_way_so_stop.wav.mp3","Car Crash.wav","car_park_skiding_corner.wav.mp3","Cave Swoosh.wav","cave_dungeon_secret_temle.mp3","Chain Drop Riser.wav","chaostekk_i.mp3","chaostekk_ii.mp3","chill_coast_beach_birds_windy_mood_atmo_surround.wav.mp3","Chior Riser.wav","choir_aah.wav.mp3","choir.aif.mp3","Chop Swoosh.aiff","chuck_plast_23046.mp3","church_atmosphere_with_choir.mp3","clap_po-12.aif.mp3","classic_modular_synth_space_sounds_-_161125.mp3","clock_divider_as_sub_bass_generator.mp3","clock_hit.mp3","closer_to_jupiter.wav.mp3","coin_flip_ping.mp3","collect1.wav","collect2.wav","collect3.wav","collect4.wav","collect5.wav","complex_riser_3.aif.mp3","compressor_motor.wav.mp3","compute.wav","computeron.wav","continuum7radioloop344hz.wav.mp3","cough,_three_slams_and_lock.wav.mp3","crash_hit_short1.wav.mp3","crash.wav.mp3","crashing.wav.mp3","creaking_wood.mp3","creature_angry_bug_monster_fantasy_sci-fi_sfx_sound-design_foley_201203_0086.wav.mp3","creep_out.mp3","creepy_ambience_sound.mp3","creepy_traffic_cleaned_carby.wav.mp3","crunchy_noise.mp3","curtains_stretchedx10.wav.mp3","curtains_stretchedx14_octdown_eqverb.wav.mp3","cyber_dub2.mp3","cyber_escape_techno.mp3","d10_rolls.wav.mp3","dare_51_-_3_point_5_inch_disc_though_modular_synth.wav.mp3","Dark Build.wav","Dark Riser.wav","dark_alien_planet_scary_horror_atmo_amb_atmosphere_surround.wav.mp3","dark_ambience.wav.mp3","dark_atmo_thriller_factory_fantasy_horror_atmosphere.wav.mp3","dark_myst_mystery_asian_asia_oriental_sad_mood_fantasy_wind_thriller_cinematic_atmo.wav.mp3","dark_nasty_hit.mp3","dark_pulsating_vocal_suspenseful_ambient_music.mp3","dark_ship_horror_atmosphere.mp3","dark_temple.mp3","data_corruption_2.mp3","deep_house_kick_drum_2.mp3","deep_kick_solo-120.bpm.wav.mp3","deep_piano_and_ensemble_melody_-_f_dorian.wav.mp3","delays544.mp3","desecration_of_hope_(dramatic_strings).wav.mp3","digital_donut.wav.mp3","diode_chaos_-_less_activity.wav.mp3","diode_chaos_-_slow_chaos_tech.mp3","dirt_it_is.mp3","dirty_fmaj7_cycling_envelope_variations.mp3","dishes_01.ogg","dishes_02.ogg","dishes_03.ogg","dishes_04.ogg","disq508_my_shepard_tone_original.wav.mp3","dog_shih_tzu_bark_series_02.wav.mp3","dolphin_noise-.wav.mp3","dolphin_screaming_underwater_in_caribbean_sea_(mexico).mp3","door_01.ogg","door_02.ogg","door_close_01.ogg","door_close_02.ogg","door_close_03.ogg","door_close_04.ogg","door_open.ogg","Double Swoosh.wav","double_yikes_stretch.wav.mp3","dragontrance_string-loop-1b.wav.mp3","dry_controlled_explosion.mp3","dslr_camera_sounds.mp3","dt_s-noise_texture.mp3","dubby_am_chord.mp3","duduk_with_orchestra.mp3","dumping_jar_contents_in_toilet.mp3","e_on_bass_01.wav.mp3","e-guitar_2.mp3","e-tronic_clip.wav.mp3","e24.mp3.mp3","echosplosion.wav","eggs_frying_2017.wav.mp3","elacho_bass_drum.wav.mp3","elacho_snare.wav.mp3","Electricity build.wav","Electro .flac","electronic_closed_high_hat_#1.mp3","electronic_confusion.mp3","electronic_minute_354_-_simple_solo.wav.mp3","electronic_minute_355_-_genie_replicating.wav.mp3","electronic_minute_357_-_genie_techno.wav.mp3","electronic_minute_358_-_genie_exp_diotima.wav.mp3","electronic_minute_362_-_2xsqrtovca.wav.mp3","electronic_minute_363_-_rainy_day_waves.wav.mp3","electronic_minute_365_-_sunny_day_2.wav.mp3","electronic_minute_366_-_sunny_day_3.wav.mp3","electronic_minute_367_-_3_short_cycles.wav.mp3","electronic_minute_371_-_5_seconds_from_370.wav.mp3","electronic_minute_373_-_fast_modular_synth_arpeggio_loop.wav.mp3","electronic_minute_375-376-377.wav.mp3","electronic_minute_378.mp3","electronic_minute_380.mp3","electronic_minute_387_-_i_forgot.mp3","electronic_minute_390_-_loop_it.mp3","electronic_minute_391_-_time_flows.mp3","electronic_minute_392_-_out_of_frustration_noodle.wav.mp3","electronic_minute_394_-_5_4_and_diss.mp3","electronic_minute_397_-_out_of_phase.mp3","electronic_minute_397_-_slow_ring_mod_seq.mp3","electronic_minute_398_-_ode_to_east.mp3","electronic_minute_398_-_ringmoddronetech.mp3","electronic_minute_399_-_hidden_for_you.mp3","electronic_minute_404_-_long_nonsensical_loop_2.mp3","electronic_minute_405_-_84hp.mp3","electronic_minute_409_-_horror_suspense_loop.wav.mp3","electronic_minute_415_-_suspense_music_vcv-rack.wav.mp3","electronic_minute_422_-_delayed_voices.mp3","electronic_minute_424_-_first_use.mp3","electronic_minute_428_-_soft_simple_ambient_music.mp3","electronic_minute_no_1.wav.mp3","electronic_minute_no_2.wav.mp3","electronic_minute_no_20_-_jupiter_storm_percussion_sounds.wav.mp3","electronic_minute_no_204_-_modular_synth_wiggle_mayhem.wav.mp3","electronic_minute_no_209_-_first_modular_synth_wiggle_2019.wav.mp3","electronic_minute_no_21_-_jupiter_storm_percussion_sounds_some_quick_changes.wav.mp3","electronic_minute_no_215_-_intermission_swoosh.wav.mp3","electronic_minute_no_216_-_intermission_acid.wav.mp3","electronic_minute_no_22_-_analog_modular_synth_groove_for_st_olympias.wav.mp3","electronic_minute_no_224_-_3rd_after_13_drone.wav.mp3","electronic_minute_no_225_-_rhythmic_thoughts.wav.mp3","electronic_minute_no_24_-_quality_evaluation.wav.mp3","electronic_minute_no_240_-_soft_ebm_beat.wav.mp3","electronic_minute_no_247_-_more_ants.mp3.mp3","electronic_minute_no_248_-_warped_kyrie.wav.mp3","electronic_minute_no_249_-_deep_space_kyrie.wav.mp3","electronic_minute_no_25_-_beware_of_the_vactrol.wav.mp3","electronic_minute_no_253_-_407072_remix_test.wav.mp3","electronic_minute_no_254_-_using_465286_in_phonogene.wav.mp3","electronic_minute_no_255_-_using_465286_in_phonogene_ii.wav.mp3","electronic_minute_no_257_-_some_flute_maybe.wav.mp3","electronic_minute_no_258_-_ambient_music_with_phonogene.wav.mp3","electronic_minute_no_262_-_cinematic_doomsday_drone.wav.mp3","electronic_minute_no_265_-_generated_drone_190429_2.wav.mp3","electronic_minute_no_271_-_water_in_space.wav.mp3","electronic_minute_no_278_-_clean_techno_beat_w_home_made_high_hat.wav.mp3","electronic_minute_no_284_-_bartonmusicalcircuits_2lfosh_(bmc_017).wav.mp3","electronic_minute_no_29_-_between_space.wav.mp3","electronic_minute_no_291_-_smaller_better_weirder.wav.mp3","electronic_minute_no_293_-_strange_modular_explorations_in_mono.wav.mp3","electronic_minute_no_296_-_bubbly_chaos.wav.mp3","electronic_minute_no_306_-_chaotic_noise_glitch.wav.mp3","electronic_minute_no_31_-_scales_with_fnatt.wav.mp3","electronic_minute_no_310_-_mathematical_division_2.wav.mp3","electronic_minute_no_311_-_mathematical_division_3.wav.mp3","electronic_minute_no_316_-_mission_accomplished.wav.mp3","electronic_minute_no_319_-_feedback_is_art.wav.mp3","electronic_minute_no_31b_-_full_modular_acid_remix.mp3.mp3","electronic_minute_no_320_-_explores_relationships.wav.mp3","electronic_minute_no_321_-_explores_relationships_variation.wav.mp3","electronic_minute_no_323_-_random_bleeps_and_bloops.wav.mp3","electronic_minute_no_324_-_taking_over_chaos.wav.mp3","electronic_minute_no_33_-_start_with_chaos.wav.mp3","electronic_minute_no_333_-_vcv-rack_quantussy_cheating.wav.mp3","electronic_minute_no_334_-_krellpatch_54s.wav.mp3","electronic_minute_no_335_-_krellogy_i.wav.mp3","electronic_minute_no_336_-_krellogy_ii.wav.mp3","electronic_minute_no_34_-_how_did_i_do_it.wav.mp3","electronic_minute_no_340_-_some_fm_maybe.wav.mp3","electronic_minute_no_341_-_east_and_west.wav.mp3","electronic_minute_no_345_-_enter_the_engine_room.wav.mp3","electronic_minute_no_349_-_348_processed.wav.mp3","electronic_minute_no_352_-_running_in_fear.wav.mp3","electronic_minute_no_39_-_q_relative.wav.mp3","electronic_minute_no_4.wav.mp3","electronic_minute_no_40_-_drums_of_doom.wav.mp3","electronic_minute_no_44_-_chain_reaction.wav.mp3","electronic_minute_no_46_-_soon_five.wav.mp3","electronic_minute_no_50_-leaving_equilibrium.wav.mp3","electronic_minute_no_52_-_do_you_hear_a_pattern.wav.mp3","electronic_minute_no_55_-_3_cells_(vcv-rack).wav.mp3","electronic_minute_no_55_-_minimal_but_moving.wav.mp3","electronic_minute_no_56_-_random_and_a_bad_delay.wav.mp3","electronic_minute_no_58_-_more_looping_envelopes.wav.mp3","electronic_minute_no_59_-_delay_more.wav.mp3","electronic_minute_no_6.wav.mp3","electronic_minute_no_60_-_rumble.wav.mp3","electronic_minute_no_61_-_filter_sounds.wav.mp3","electronic_minute_no_62_-_no_excuse.wav.mp3","electronic_minute_no_66_-_insekter.wav.mp3","electronic_minute_no_68_-_yvig.wav.mp3","electronic_minute_no_69_-_galen.wav.mp3","electronic_minute_no_70_-_från_samma_inspelning_som_galen.wav.mp3","electronic_minute_no_71_-_en_osc_ett_vcf_en_timme_(mp3).mp3.mp3","electronic_minute_no_73_-_dramatic_strange_loop.wav.mp3","electronic_minute_no_75_-_där_stenar_rullar.wav.mp3","electronic_minute_no_79_-_eternal_tension_variations.wav.mp3","electronic_minute_no_80_-_interference.wav.mp3","emotional_pop_guitar_loop_3_[normal]_[93bpm]_[e_minor].mp3","Empty Swoosh.wav","Energy Bounce.wav","etheral_chip_beat.mp3","ethno_folk_accoustic_dark_horror_experimental_thriller_sad_mood_music_atmo_ambience_cinematic_film_movie_131bpm_surround.wav.mp3","ethno_folk_vocal_africa_arfican_afro_woman_chill_relx_atmo_soundscape_cinematic_surround.wav.mp3","ethno_folk_voices_woman_vocal_atmo_african_chill_relax_atmo_cinematic_film_movie.wav.mp3","experimental_session.wav.mp3","explodify.wav","explodify2.wav","explodify3.wav","explodify4.wav","explodify5.wav","explosion.ogg","Explosion.wav","explosion.wav.mp3","Explosive.wav","f_and_quint_loop.wav.mp3","face_the_dance_130_bpm.wav.mp3","fail.wav","fan_motor.mp3","fart_sound_50.mp3","Fast Whoosh.flac","fast_warp_in.mp3","faucet_+_sink_+_drain_gurgling.mp3","faucet_leak_shift.mp3","Fear Riser.wav","ff_chaos_techno_1.wav.mp3","FF_punch.wav","Fiery Explosion.wav","find_your_loop_in_the_land_of_random.mp3","fire_flame_burner.mp3","Firecracker Explosion.flac","five_modular_minutes.wav.mp3","floor_tom_po-12.aif.mp3","flump.wav","fly_in.wav.mp3","flying_tv-0_buzzing_fly.aiff.mp3","fm_noise_with_some_rhythm.wav.mp3","foley_bullet_hit_metal.wav.mp3","footsteps_boots_tile_mono.wav.mp3","footsteps_in_a_concrete_corridor_1.mp3","footsteps_metallic_muffled_louder.wav.mp3","footsteps_on_concrete.mp3","freakystien.wav.mp3","fridge_sfx.mp3","fried_twinkie.wav.mp3","from_my_home_2_you.wav.mp3","frominside_pad_loop_c_4s.wav.mp3","fun_spins_01.varispeed_*_2.24.wav.mp3","funny_whoop_cartoon_sounds.mp3","g12-15-dolphins_underwater.wav.mp3","Gamify.wav","general_midi_ambient_fl-20.mp3","ghosts_moaning.wav.mp3","giant_killer_rat_howls.ogg.mp3","gibberish_1.mp3.mp3","glass_-_singing_wine_glass_-_full_01.wav.mp3","glass_-_singing_wine_glass_-_full_02.wav.mp3","glass_01.ogg","glass_02.ogg","glass_03.ogg","glass_04.ogg","glass_05.ogg","glass_aquaphone_drone_2.mp3","glassding44-24b.wav.mp3","glitch_rock_loop.wav.mp3","glitchbuzz3.wav.mp3","glitched_darbuka_made_with_samsara.wav.mp3","glowing_pad.wav.mp3","gnome_surprise.wav.mp3","golden.wav.mp3","gong_01.ogg","gong_02.ogg","gong.aif.mp3","grogurgle.wav.mp3","gross_beat.wav.mp3","grunt2_-_death_pain.wav.mp3","gtr.wav.mp3","guitar_beat_thing.mp3","guitar_psychosis.mp3","hair_dryer.mp3","hardsyncandsquarewaves.wav.mp3","harsh_analog_fm_radio_flips_3.mp3","haunted_old_factory_atmo_-_mastered.wav.mp3","haunting_music_1.wav.mp3","hi-hat_closed_po-12.aif.mp3","hi-hat_open_po-12.aif.mp3","hi-strings-4notes.mp3","hihat_acccent1jazzy1.wav.mp3","hit_01.ogg","hit_02.ogg","hit_03.ogg","hit_04.ogg","hit1.wav","hit2.wav","hit3.wav","hitting_metal_pole.mp3","hop.wav","Horror Violin.mp3","horror_chase_song,_slow_(120_bpm)_then_fast_(145_bpm)_and_ends_slow_again.mp3","house_bedroom_door_2.wav.mp3","howling_distorting_feedback_patch.wav.mp3","huge_explosion.mp3","huge_impact_#2.mp3","hyperspace.wav.mp3","i_am_the_harbinger_of_your_doom.mp3","i_have_got_a_sequencer_-_first_test_-_loop.wav.mp3","if_you_dont_know_-_krell_and_chaos_(mono).wav.mp3","Impact Riser.wav","impact_sfx_028.wav.mp3","in_between_there_is_silence.mp3","inn_or_tavern_keeper_lines_male_2.mp3","intersymmetric-xyz_room_code_hi_from_sweden(220407).wav.mp3","intro.mp3","its_easy_(tomentum+_remix).mp3","Jet Engine Swoosh.wav","jews_harp_from_hell.wav.mp3","juicy_124_g.wav.mp3","jump.wav","jungle_tribal_hut_-_jungle_cinematic_tribal_drums_cajon_synth_atmo_music_background_drama.wav.mp3","key_open_01.ogg","key_open_02.ogg","keyboard_4.wav.mp3","kick_natural1.wav.mp3","kick_natural2.wav.mp3","kick_po-12.aif.mp3","kinda_vocoder_physical_modelling_mic_02.wav.mp3","kittens_from_hell.mp3","la-a.m4a.mp3","laffik_pol_polański.wav.mp3","laser.wav","laser2.wav","laser3.wav","laser4.wav","lawnmower.wav.mp3","lfo_controlled_amplitude_experiment.mp3.mp3","light_in_the_void.mp3","light_wooshes.mp3","lilu_bb.mp3","limited_feedback.wav.mp3","logistische_gleichung_longer_session.wav.mp3","long_modular_christmas_drone.wav.mp3","low_slow_metal.mp3","lyrics544.mp3","machine_01.ogg","machine_02.ogg","machine_03.ogg","machinery_hum.mp3","mad_flanger.mp3","magpies_of_december_etc.wav.mp3","male_grunting_in_pain.mp3","male_scream_pain_torture.wav.mp3","many_bird_tree.mp3","massive_zebra_drone.mp3","mechanical_dreams.mp3","mechanical_machinery_3.mp3","mechanical_machinery_technology.mp3","mechanical_machinery.mp3","mechanical_sfx_m001.wav.mp3","medieval_music_by_själ_on_hunehals_borg.mp3.mp3","metal_01.ogg","metal_02.ogg","metal_03.ogg","metal_04.ogg","metal_05.ogg","metal_06.ogg","metal_07.ogg","metal_08.ogg","metal_09.ogg","metal_10.ogg","metal_11.ogg","metal_12.ogg","metal_bucket_hit_reverb.wav.mp3","metal_impact.mp3","metal_sfx_&_foley,_metal_dings_with_reverb.wav.mp3","metal_water_pan.mp3","metallic_hits,_strings,_inside_piano,_sequence_2.mp3","metallic_sound_with_drum_stick.wav.mp3","meteor_flyby.mp3","microwave_door_close.ogg","microwave_door_open.ogg","mister_bubble_130_dm.wav.mp3","modified_doepfer_a-124_vcf5_wasp_filter.wav.mp3","modular_filter_work-out.wav.mp3","modular_space_sounds_161229.mp3","modular_synth_fm-modulation_mayhem_drone.wav.mp3","modular_synth_sequence_with_character_1.wav.mp3","modular_synth_thru_guitar_amp.wav.mp3","modularbreath.wav.mp3","monster_roar.mp3","monster_sound_effects_6.wav.mp3","monster_water_whirl_lofi.wav.mp3","monster.wav.mp3","mostly_empty_soda_can_playing.wav.mp3","mother_ship.wav.mp3","move.wav","musical_composition.mp3","myst_jungle_tribal_dark_thriller_vocal_atmo_woman_men_animals_birds_drone_cinematic_surround.wav.mp3","nasty_110_d.wav.mp3","Nature Walk.wav","neon-colored_palm.mp3","new_language_011.wav.mp3","noise_01.ogg","noise_02.ogg","noise544.mp3","not_random_but_chaos.mp3","obdulalongatta.wav.mp3","oceanwave1.wav","oceanwave2.wav","oceanwave3.wav","oceanwave4.wav","oceanwave5.wav","offbalance.wav","old_spaceship_engine_room_ambience.wav.mp3","ominus.wav.mp3","omnitech_140.wav.mp3","on_the_sreet_130.wav.mp3","one_lfo_controlling_pitch_spread_and_vcf_with_vca.mp3","orchestal_music_game.mp3","other_01.ogg","other_02.ogg","other_03.ogg","other_04.ogg","other_05.ogg","other_06.ogg","other_07.ogg","ouch.wav","outside_my_door_-_iphone_5_recording_25th_of_may_2017.wav.mp3","paper_01.ogg","paper_02.ogg","paper_03.ogg","paper_04.ogg","past_illusions_(ambient).mp3","patch_with_dynamics_and_variation.wav.mp3","patch1-merge.wav.mp3","paulstretch_of_atonal_modular_sound.mp3","penelope_1.mp3","penelope_2.mp3","phrygian_fog.mp3","piano_keys_vibration.mp3.mp3","piano_loops_154_efect_2_octave_long_loop_120_bpm.mp3","playful_modular_sounds.wav.mp3","plop_01.ogg","plop_02.ogg","plop.wav","plukin2.wav.mp3","plukstrn.wav.mp3","pot_01.ogg","pot_02.ogg","power_pluckin.wav.mp3","powerful_crush.mp3","Powerup.wav","Powerup2.wav","presence_-_sci-fi.mp3","processed_422056_toiletrolltube_reverb.wav.mp3","pulsating_vibrating_shortwave_radio_noise.mp3","pump_the_bump.wav.mp3","punch.wav","purpose_ii.mp3","Quick Swoosh 001.wav","Quiet Swoosh.wav","r2d2.wav","radio_fm_search_tuning_whistling_pulsating.mp3","rainfall.mp3","random_generic_sci-fi_ambience.mp3","random_melody_from_doepfer_site.mp3","rave_tunes_102_bpm-19.wav.mp3","rebound_thunder.wav.mp3","recurrent_sound_in_my_life_487.mp3","reflect.wav","resolve.wav.mp3","retarded_laugh.mp3","rev_cymb_18.wav.mp3","reverb_house_beat_116bpm_with.wav.mp3","reverb_short_house_beat_116bpm_with-02.wav.mp3","Reverse Swoosh.wav","reverse_phase_quantum.wav.mp3","riser hit.wav","river_death.wav.mp3","robo_bird.wav.mp3","robot_undergoing_analysis_24bit_48khz.wav.mp3","rock_seq_170.wav.mp3","Rocket Launch.wav","rolling_tense_cinematic_pondering_bass_loop.mp3","rooftop_rhapsody.mp3","room_musik99_220407_1945.mp3","roughsea.wav.mp3","rubber_band_140.wav.mp3","rustle01.flac","rustle02.flac","rustle03.flac","s10-10_metal_objects_hitting_and_fall.wav.mp3","s10-17_small_metal_and_glass_objects_fall_onto_hard_floor.wav.mp3","s16-18_tesla_coil_sparking_and_humming.wav.mp3","s21-28_slow_river;_small_water_movement.wav.mp3","s21-29_swimming_in_pool.wav.mp3","s23-22_arrows_fly_&_hit;_indoors.wav.mp3","s24-22_blacksmith_hitting_anvil_with_hammer;_two_versions.wav.mp3","s26-03_respirator;_loopable.wav.mp3","s27-06_panther_and_wild_boar_fight.wav.mp3","s27-12_mastodon_growls;_dinosaur.wav.mp3","s27-29_chimpanzee_whimper_and_scream.wav.mp3","s28-33_bees_swarming.wav.mp3","s29-18_boat_creaking;_moving_against_dock.wav.mp3","s31-29_wild_men_growl_and_fight.wav.mp3","s34-15_two_dragons_scream.wav.mp3","s34-18_large_spring_snaps_with_a_twang.wav.mp3","s34-25_loud_diesel_small_truck_enters_and_crashes_through_fence.wav.mp3","s34-28_submarine_propeller_under_water.wav.mp3","s37-14_two_cars_crash_foley;_good_metallic_bump.wav.mp3","s38-01_man_eaten_by_alligator;_screams_[wilhelm_screams].wav.mp3","s38-22_background_ominous_rumble;_loopable.wav.mp3","s38-27_crazy_machine_sound_from_warner_brothers;_loopable.wav.mp3","s40-05_computer_overload_&_fail.wav.mp3","s41-21_spooky_singing_ghost_wind.wav.mp3","sad_alone_orchestra_strings_drama_music_mood_surround.wav.mp3","sameba_kids_choir_-_2.wav.mp3","sample_for_phonogene_-_a_mix_of_321731_81737_49435.wav.mp3","scambling_eggs.mp3","scary_ambience_skeletons.mp3","scary_drone.wav.mp3","sci-fi_fx_compilation.wav.mp3","scifi_hit_thing_3.wav.mp3","scifi_microbrute_02.mp3","scifi_microbrute_03.mp3","scifi_microbrute_13.mp3","scifi_microbrute_16.mp3","scifi_synth_drone_306f.mp3","selected_frequencies_3_vcv-rack.mp3","selected_frequencies_vcv-rack.mp3","shaped_by_chaos.mp3","Shaving Cream.wav","shhhh_an_alien_bird.wav.mp3","shimmer-guitar.wav.mp3","shot_01.ogg","shot_02.ogg","shower_running.mp3","sibling_drone_2.wav.mp3","sibling_drone_3.wav.mp3","silent_spring.wav.mp3","slam_01.ogg","slam_02.ogg","slam_03.ogg","slam_04.ogg","slam_05.ogg","slam_06.ogg","slam_07.ogg","slap.wav","small_fireworks_-_happy_new_year_2018.wav.mp3","small_three_lfo_patch.wav.mp3","Soft Wind.mp3","soft_friday_drone.wav.mp3","somebeat210308loop.wav.mp3","sonic_debris.wav.mp3","sorry,_im_a_bit_late.wav.mp3","Sound of the Echo.wav","sound_strobe.mp3","sounds_crazy.wav.mp3","Space Station.mp3","space_hole_test.wav.mp3","space_pirates.mp3","spacehole_exploration.mp3","spanish-carnival-choir.wav.mp3","spectral_fragment_of_speech.mp3","spin1.wav.mp3","spinning_toss.wav","spirits_moving.wav.mp3","splash_01.ogg","splash_02.ogg","splash.wav","spooky_metallic_sound.mp3","spring_01.ogg","spring_02.ogg","spring_03.ogg","spring_04.ogg","spring_05.ogg","spring_06.ogg","spring_07.ogg","spring_08.ogg","spring_09.ogg","spring1.wav","spring2.wav","spring3.wav","spring4.wav","sputter.wav.mp3","Sqeeky Clean.mp3","square_wave_techno_terror.wav.mp3","static_cu_min_yo.mp3","steamwhistle_0.wav","stekachampinjonerljudavfläkt_gis_sweden_140512.wav.mp3","stereo_city_garden_rain.mp3","stereo_dub_fx_150_bpm.wav.mp3","stereo_sub_crossfade_b.wav.mp3","stone_photo-2-sound.wav.mp3","storm_eunice_from_open_window_with_rattling_fluttering_roof_foil.wav.mp3","storm_noise.mp3","strange_planet.mp3","string_delay.mp3","string_organ_build_up.mp3","string_pizzicato.mp3","string_slap_2.mp3","string.wav","struggle.wav","sub_oceano_a.wav.mp3","suddenly_you_realize.wav.mp3","Suspence & Whoosh.wav","switch_01.ogg","switch_02.ogg","swoosh_4.wav.mp3","Swoosh.wav","sword_drawn.mp3","symphony_of_shadows.mp3","synthetic_guitar_pluck_(180_bpm).mp3","synthetic_unease.mp3","synthsound_3_horror.wav.mp3","system_of_lies.wav.mp3","system_shutdown.mp3","taming_random_in_two_ways.mp3","tapping_sound.mp3","taunt_(robotic_voice).mp3","techno_retro_trance_sample_short_cinematic_120bpm_music_surround.wav.mp3","tekbeat_140.wav.mp3","tekno001.mp3","tekno003.mp3","tekno004.mp3","tekno007s.mp3","teknoloop002.mp3","telephone.wav","teleport_sound.mp3","Tennis Swoosh.wav","texure_version_of_stupid_chase_-_could_be_useful.wav.mp3","tg92n02s808n04.flac.mp3","tgrowl.wav.mp3","The Cut Off.wav","The Intro.wav","The Wait.wav","the_abyss.mp3","the_edge.wav.mp3","the_kind_of_blips_you_hate.wav.mp3","the_last_ocean_loop.wav.mp3","the_mirror.mp3","the_song_stranglehold_+_smoking_reefer.mp3","the_voice.wav.mp3","thecno3chord_140bpm.wav.mp3","ThunderStorm.wav","tinitus_de_luxe_-_modular_noise.wav.mp3","tinyexplode.wav","tinywarble.wav","toilet_01.ogg","toilet_02.ogg","tom_high_1980s_huge_reverb.wav.mp3","tools_01.ogg","tools_02.ogg","tools_03.ogg","tools_04.ogg","tools_05.ogg","toruński_ambient.mp3","toxin.wav.mp3","train_upon_us.wav.mp3","transform.wav","transform2.wav","trembling_low_frequency_rumble.mp3","tribe_drum_loop.mp3","true_to_the_patch_-_divide_by_64.wav.mp3","two_voices_caught_in_a_chaotic_feedback_patch.wav.mp3","un_poco_de_chile_130_bpm.wav.mp3","unclear_message_in_ship_station.wav.mp3","unreal_whispers.mp3","uoki-toki_polivoks_vcf_fully_patched_for_noise.wav.mp3","value_57.mp3","value_67.mp3","vcf_practice_and_a_bass_drum.wav.mp3","vcv_modular_experiments_(sychomancer_test)_.wav.mp3","vcv_rack_jam_#1.wav.mp3","vcv-rack_my_radio_patch_-_take_1.wav.mp3","vcvradio220421.mp3","very_very_electronic_beat_in_c.wav.mp3","video_game_warrior_134_am.wav.mp3","vidsyn_oct2011_pastisch_1.wav.mp3","virus_saturday_disco.mp3","voice_saying_techno.mp3","vy_zat_vas_krazy.mp3","wacky_laugh.mp3","walking_on_sand_and_gravel.mp3","war_of_the_worlds_horn_1.wav.mp3","warp_drive_initiate.mp3","water_splash,_emptying_a_bucket_2.mp3","water_splashing.mp3","Wave Swoosh.wav","websdr_shannon_volmet_weather_report_13264.0khz.mp3","weird_01.ogg","weird_02.ogg","weird_03.ogg","weird_04.ogg","weird_05.ogg","what_am_i_doing.wav.mp3","what_it_is.mp3","when_not_in_control_time_stretch_of_very_small_part_(a_swoosh).mp3","whimper.wav","Whip Swoosh 2.wav","Whip Swoosh.wav","whisper_evil_little_nothings_to_me.mp3","whispering_man.mp3","whistle_cab.wav","whistle_wolf.wav","whistle.wav","whistle2.wav","whistle3.wav","who_done_it.mp3","whoosh.mp3","wide_open.wav.mp3","wilder_thoughts_e-guitar_(123_bpm).wav.mp3","wind_from_chaos_no_1.wav.mp3","wind.ogg.mp3","wineglass_04.wav.mp3","wobbledown.wav","wobbledown2.wav","wobbleup.wav","wobbleup2.wav","woman_insane_laughter.mp3","wood_milling_a_door_and_vacuum_cleaning.m4a.mp3","wooded_box_open.ogg","wooden_01.ogg","wooden_02.ogg","wooden_03.ogg","working_on_my_reverb_soundscape.mp3","wow_siren.wav.mp3","wrong_answer_01.mp3","xmgb3_(cross_modulated_ghost_bell_3).mp3","you_are_sooo_zapped.wav.mp3","zombie_growl_3.wav.mp3","zombie_pain_6.wav.mp3","zombie_vocals_2.mp3","zombie_vocals.mp3"
-        ];
-
-        const library = rawFiles.map((filename, index) => {
+        function getMetadata(filename) {
             const clean = cleanTitle(filename);
             let type = "SFX";
             let cat = "SFX";
-
             const lower = filename.toLowerCase();
+
             if (lower.includes("riser") || lower.includes("intro") || lower.includes("build") || lower.includes("whoosh") || lower.includes("transition") || lower.includes("swoosh") || lower.includes("reverse")) {
                 cat = "Riser"; type = "SFX";
             } else if (lower.includes("music") || lower.includes("orchestra") || lower.includes("piano") || lower.includes("guitar") || lower.includes("song") || lower.includes("beat") || lower.includes("loop") || lower.includes("tekno") || lower.includes("techno") || lower.includes("melody") || lower.includes("tune") || lower.includes("rhapsody") || lower.includes("symphony") || lower.includes("midi") || lower.includes("chord")) {
                 cat = "Techno"; type = "Music";
                 if(lower.includes("orchestra") || lower.includes("symphony") || lower.includes("choir")) cat = "Cinematic";
+                if(lower.includes("electronic") || lower.includes("synth") || lower.includes("modular") || lower.includes("glitch") || lower.includes("8-bit") || lower.includes("chip") || lower.includes("computer") || lower.includes("digital") || lower.includes("beep") || lower.includes("blip")) cat = "Electronic";
             } else if (lower.includes("nature") || lower.includes("rain") || lower.includes("wind") || lower.includes("forest") || lower.includes("water") || lower.includes("bird") || lower.includes("storm") || lower.includes("river") || lower.includes("sea") || lower.includes("thunder")) {
                 cat = "Nature"; type = "SFX";
             } else if (lower.includes("zombie") || lower.includes("horror") || lower.includes("ghost") || lower.includes("scary") || lower.includes("scream") || lower.includes("monster") || lower.includes("death") || lower.includes("haunted") || lower.includes("evil") || lower.includes("pain") || lower.includes("spooky") || lower.includes("unease")) {
@@ -492,47 +494,12 @@
                 cat = "Foley"; type = "SFX";
             } else if (lower.includes("ambience") || lower.includes("drone") || lower.includes("factory") || lower.includes("hum") || lower.includes("noise") || lower.includes("atmosphere") || lower.includes("background") || lower.includes("texture")) {
                 cat = "Ambiance"; type = "SFX";
-            } else if (lower.includes("electronic") || lower.includes("synth") || lower.includes("modular") || lower.includes("glitch") || lower.includes("8-bit") || lower.includes("chip") || lower.includes("computer") || lower.includes("digital") || lower.includes("beep") || lower.includes("blip")) {
-                cat = "Electronic"; type = "Music";
             }
-        // Inside the library.map function...
-} else if (lower.includes("electronic") || lower.includes("synth") || lower.includes("modular") || lower.includes("glitch") || lower.includes("8-bit") || lower.includes("chip") || lower.includes("computer") || lower.includes("digital") || lower.includes("beep") || lower.includes("blip")) {
-                cat = "Electronic"; type = "Music";
-            }
-            
- // 1. Define webFiles FIRST
-        const webFiles = [
-             { id: 1, title: "Uplifting Tech Bed", artist: "Corporate Music", type: "Music", category: "Electronic", duration: "2:10", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-             { id: 2, title: "Lo-Fi Study Beat", artist: "Chillhop", type: "Music", category: "Electronic", duration: "1:30", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
-        ];
+            return { clean, type, cat };
+        }
 
-        // 2. Map the R2 files
-        const r2Files = rawFiles.map((filename, index) => {
-            const clean = cleanTitle(filename);
-            const lower = filename.toLowerCase();
-            let cat = "Other", type = "SFX";
-
-            if (lower.includes("drum") || lower.includes("snare") || lower.includes("kick") || lower.includes("hihat") || lower.includes("perc")) {
-                cat = "Drums"; type = "SFX";
-            } else if (lower.includes("ambient") || lower.includes("ocean") || lower.includes("horror")) {
-                cat = "Ambient"; type = "SFX";
-            } else if (lower.includes("electronic") || lower.includes("synth") || lower.includes("beep")) {
-                cat = "Electronic"; type = "Music";
-            }
-
-            return {
-                id: index + 100,
-                title: clean,
-                artist: "SonicLibrary",
-                type: type,
-                category: cat,
-                duration: "--:--",
-                url: `https://pub-a7b3a82a8703e3845f705eb8e6609e3a.r2.dev/${encodeURIComponent(filename)}`
-            };
-        });
-
-        // 3. Combine them into the final library
-        const library = [...webFiles, ...r2Files];
+        // --- GLOBAL STATE ---
+        let fullLibrary = []; // Will be populated by Worker
 
         const categoriesByType = {
             'all': ['Riser', 'Techno', 'Electronic', 'Cinematic', 'Nature', 'Horror', 'Sci-Fi', 'Foley', 'Ambiance'],
@@ -570,11 +537,57 @@
             tierTag: document.getElementById('tierTag')
         };
 
+        // --- DYNAMIC LOADER ---
+        async function loadLibrary() {
+            try {
+                showToast("Connecting to cloud...");
+                
+                // 1. Fetch file list from Cloudflare Worker
+                const response = await fetch(WORKER_URL);
+                if (!response.ok) throw new Error("Worker connection failed");
+                
+                const remoteFilenames = await response.json();
+
+                // 2. Map filenames to track objects
+                const r2Tracks = remoteFilenames.map((filename, index) => {
+                    const meta = getMetadata(filename);
+                    return {
+                        id: index + 100, 
+                        title: meta.clean,
+                        artist: "SonicLibrary",
+                        type: meta.type,
+                        category: meta.cat,
+                        duration: "--:--",
+                        url: `${R2_PUBLIC_URL}/${encodeURIComponent(filename)}`
+                    };
+                });
+
+                // 3. Add static web files (Optional)
+                const webFiles = [
+                     { id: 1, title: "Uplifting Tech Bed", artist: "Corporate Music", type: "Music", category: "Electronic", duration: "2:10", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+                     { id: 2, title: "Lo-Fi Study Beat", artist: "Chillhop", type: "Music", category: "Electronic", duration: "1:30", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
+                ];
+
+                fullLibrary = [...webFiles, ...r2Tracks];
+                
+                renderList();
+                preloadDurations();
+                showToast(`Library Ready: ${fullLibrary.length} sounds`);
+
+            } catch (error) {
+                console.error("Library Load Error:", error);
+                els.list.innerHTML = `<div style="text-align:center; padding:3rem; color: #ff3b30;">
+                    <h3>Connection Error</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">Could not load library. Please check your Worker URL.</p>
+                </div>`;
+            }
+        }
+
+        // --- INITIALIZATION ---
         function init() {
             renderSubFilters();
-            renderList();
+            loadLibrary(); // <--- Now calls dynamic loader
             setupEvents();
-            preloadDurations();
             checkPaymentSuccess();
 
             auth.onAuthStateChanged(async (user) => {
@@ -742,6 +755,13 @@
 
         function renderList() {
             els.list.innerHTML = '';
+            
+            // Safety check if library hasn't loaded
+            if (!fullLibrary || fullLibrary.length === 0) {
+                 // Loading skeleton could go here, but for now we wait
+                 return;
+            }
+
             const filtered = fullLibrary.filter(t => {
                 const typeMatch = state.activeType === 'all' || t.type === state.activeType;
                 const catMatch = state.activeCategory === 'all' || t.category === state.activeCategory;
@@ -799,59 +819,45 @@
             showToast(btn.classList.contains('liked') ? "Added to Library" : "Removed from Library");
         }
 
- window.downloadItem = async function(url, e) {
-    e.stopPropagation();
+        window.downloadItem = async function(url, e) {
+            e.stopPropagation();
 
-    // 1. Auth & Subscription Checks
-    if(!state.user) { 
-        openModal('loginModal'); 
-        return; 
-    }
-    if(!state.isSubscribed) { 
-        openModal('pricingModal'); 
-        return; 
-    }
+            if(!state.user) { 
+                openModal('loginModal'); 
+                return; 
+            }
+            if(!state.isSubscribed) { 
+                openModal('pricingModal'); 
+                return; 
+            }
 
-    // 2. Show user feedback
-    const btn = e.currentTarget;
-    const originalContent = btn.innerHTML;
-    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 4v4m0 4v4"/></svg>`; // simple loading icon
-    showToast("Preparing download...");
+            const btn = e.currentTarget;
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 4v4m0 4v4"/></svg>`; 
+            showToast("Preparing download...");
 
-    try {
-        // 3. Fetch the file data
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const blob = await response.blob();
-        
-        // 4. Create a temporary link to force download
-        const blobUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        
-        // Extract filename from URL or default to 'audio.mp3'
-        const filename = url.split('/').pop() || 'download.mp3';
-        link.setAttribute('download', filename);
-        
-        document.body.appendChild(link);
-        link.click();
-        
-        // 5. Cleanup
-        link.parentNode.removeChild(link);
-        window.URL.revokeObjectURL(blobUrl);
-        showToast("Download started!");
-
-    } catch (error) {
-        console.error("Download failed:", error);
-        showToast("Download failed. Check console.");
-        // Fallback: Open in new tab if fetch fails
-        window.open(url, '_blank');
-    } finally {
-        // Restore button icon
-        btn.innerHTML = originalContent;
-    }
-}
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                const filename = url.split('/').pop() || 'download.mp3';
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+                showToast("Download started!");
+            } catch (error) {
+                console.error("Download failed:", error);
+                showToast("Download failed. Check console.");
+                window.open(url, '_blank');
+            } finally {
+                btn.innerHTML = originalContent;
+            }
+        }
 
         function getIndex(id) { return fullLibrary.findIndex(t => t.id === id); }
 
@@ -893,7 +899,8 @@
         }
 
         function preloadDurations() {
-            fullLibrary.forEach(track => {
+            // Optimization: Only load metadata for first 20 tracks to save bandwidth
+            fullLibrary.slice(0, 20).forEach(track => {
                 if(track.url.includes('Risers/')) {
                     const tmp = new Audio(track.url);
                     tmp.addEventListener('loadedmetadata', () => {
