@@ -241,19 +241,19 @@
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: var(--text-main); margin-top: -4px; transition: 0.2s; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
         input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 
-        /* --- PRICING REDESIGN (FIXED: EVEN & WIDE) --- */
+        /* --- PRICING FIX --- */
         .modal-pricing-content { 
-            max-width: 1200px; /* Extended width */
-            width: 95%;        /* Responsive */
-            padding: 40px; 
+            max-width: 1100px; /* Wide enough for 3 cards */
+            width: 95%;        
+            padding: 60px 40px; /* IMPORTANT: Extra vertical padding prevents clipping */
             background: var(--bg-body);
             border: 1px solid var(--border);
-            overflow: visible; 
+            overflow: visible; /* Allows shadows/scale to spill out */
         }
 
         .pricing-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 3.5rem; /* Push cards down slightly */
             position: relative; z-index: 2;
         }
         .pricing-header h2 {
@@ -264,33 +264,36 @@
         }
 
         .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 Equal columns */
-            gap: 2rem; 
+            display: flex; /* Flex is better for centering variable-sized items */
+            align-items: center; /* This vertically centers the small cards relative to the big one */
+            justify-content: center;
+            gap: 1.5rem; 
             margin-top: 1rem; 
-            align-items: stretch; /* Ensures all cards have equal height */
             position: relative; z-index: 2;
         }
 
         .price-card {
+            flex: 1;
             background: var(--bg-surface);
             border: 1px solid var(--border); border-radius: 24px; padding: 2rem;
             display: flex; flex-direction: column; position: relative;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            min-height: 440px; /* Standardize height */
+            min-height: 420px;
         }
-        .price-card:hover { transform: translateY(-5px); border-color: var(--text-muted); }
+        /* Side cards hover */
+        .price-card:not(.popular):hover { transform: translateY(-5px); border-color: var(--text-muted); }
 
-        /* The Popular Card */
+        /* The Popular Card - The "Pop" */
         .price-card.popular {
-            /* Removed scaling for even sizing */
-            background: var(--bg-surface); 
-            border: 2px solid var(--accent); /* Thicker border to highlight */
-            box-shadow: 0 0 40px var(--accent-glow);
-            z-index: 1;
-            padding: 2rem; /* Keep padding consistent */
+            transform: scale(1.15); /* Scale it up properly */
+            background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(0, 113, 227, 0.04) 100%);
+            border: 2px solid var(--accent);
+            box-shadow: 0 20px 60px -10px var(--accent-glow); /* Deep shadow */
+            z-index: 10;
+            padding: 2.5rem 2rem;
         }
-        .price-card.popular:hover { transform: translateY(-5px); }
+        /* Add hover lift to pop card too */
+        .price-card.popular:hover { transform: scale(1.15) translateY(-5px); }
 
         .pop-badge {
             position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
@@ -362,20 +365,24 @@
 
         /* Pricing Close Button */
         .close-modal-btn {
-            position: absolute; top: 20px; right: 20px;
+            position: absolute; top: 24px; right: 24px;
             width: 36px; height: 36px; border-radius: 50%;
             background: var(--bg-surface-hover); border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s; z-index: 20; color: var(--text-muted);
+            cursor: pointer; transition: 0.2s; z-index: 50; color: var(--text-muted);
         }
         .close-modal-btn:hover { background: var(--text-main); color: var(--bg-body); }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 850px) {
             /* Pricing Mobile */
-            .pricing-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .pricing-grid { flex-direction: column; gap: 2rem; }
             .price-card { width: 100%; min-height: auto; }
-            .price-card.popular { padding: 2rem; border-width: 2px; }
+            
+            /* Remove scale on mobile so it fits screen */
+            .price-card.popular { transform: none; padding: 2rem; border-width: 2px; }
+            .price-card.popular:hover { transform: translateY(-5px); }
+            
             .modal-pricing-content { padding: 30px 20px; }
             
             /* Main UI Mobile */
@@ -404,91 +411,91 @@
         </div>
     </div>
 
-   <div id="pricingModal" class="modal">
-    <div class="modal-content modal-pricing-content">
-        <div class="close-modal-btn" onclick="closeModal('pricingModal')">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-        </div>
-
-        <div class="pricing-header">
-            <h2>Unleash Your Sound</h2>
-            <p style="color:var(--text-muted);">Simple pricing. No hidden fees. Cancel anytime.</p>
-        </div>
-        
-        <div class="pricing-grid">
-            <div class="price-card">
-                <div class="price-title">Starter</div>
-                <div class="price-cost">
-                    <span class="currency">$</span>3<span class="period">/mo</span>
-                </div>
-                <ul class="feature-list">
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span>50 Downloads / mo</span>
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span>Standard MP3</span>
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span>Personal License</span>
-                    </li>
-                </ul>
-                <button class="btn-select-plan" onclick="checkout('starter')">Choose Starter</button>
+    <div id="pricingModal" class="modal">
+        <div class="modal-content modal-pricing-content">
+            <div class="close-modal-btn" onclick="closeModal('pricingModal')">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
             </div>
-
-            <div class="price-card popular">
-                <div class="pop-badge">Best Value</div>
-                <div class="price-title">Yearly Pro</div>
-                <div class="price-cost">
-                    <span class="currency">$</span>30<span class="period">/yr</span>
-                </div>
-                <ul class="feature-list">
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span style="color:var(--text-main); font-weight:600;">Unlimited Downloads</span>
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span>High-Res WAV & FLAC</span>
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span>Commercial License</span>
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span>Priority Support</span>
-                    </li>
-                </ul>
-                <button class="btn-select-plan" onclick="checkout('pro')">Upgrade to Pro</button>
+    
+            <div class="pricing-header">
+                <h2>Unleash Your Sound</h2>
+                <p style="color:var(--text-muted);">Simple pricing. No hidden fees. Cancel anytime.</p>
             </div>
-
-            <div class="price-card">
-                <div class="price-title">Lifetime</div>
-                <div class="price-cost">
-                    <span class="currency">$</span>50<span class="period">/once</span>
+            
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <div class="price-title">Starter</div>
+                    <div class="price-cost">
+                        <span class="currency">$</span>3<span class="period">/mo</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>50 Downloads / mo</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>Standard MP3</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>Personal License</span>
+                        </li>
+                    </ul>
+                    <button class="btn-select-plan" onclick="checkout('starter')">Choose Starter</button>
                 </div>
-                <ul class="feature-list">
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span>One-time Payment</span>
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span>Stem Separation</span>
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span>Future Updates</span>
-                    </li>
-                </ul>
-                <button class="btn-select-plan" onclick="checkout('ultimate')">Get Lifetime</button>
+    
+                <div class="price-card popular">
+                    <div class="pop-badge">Best Value</div>
+                    <div class="price-title">Yearly Pro</div>
+                    <div class="price-cost">
+                        <span class="currency">$</span>30<span class="period">/yr</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span style="color:var(--text-main); font-weight:600;">Unlimited Downloads</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>High-Res WAV & FLAC</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>Commercial License</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>Priority Support</span>
+                        </li>
+                    </ul>
+                    <button class="btn-select-plan" onclick="checkout('pro')">Upgrade to Pro</button>
+                </div>
+    
+                <div class="price-card">
+                    <div class="price-title">Lifetime</div>
+                    <div class="price-cost">
+                        <span class="currency">$</span>50<span class="period">/once</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>One-time Payment</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>Stem Separation</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>Future Updates</span>
+                        </li>
+                    </ul>
+                    <button class="btn-select-plan" onclick="checkout('ultimate')">Get Lifetime</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <div class="hero">
         <div class="brand-large">UNSTUNTED_SFX</div>
