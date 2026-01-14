@@ -242,98 +242,113 @@
         input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 
         /* --- PRICING REDESIGN (FIXED & EVEN) --- */
-        .modal-pricing-content { 
-            max-width: 1200px; /* Wide format */
-            width: 95%;        
-            padding: 50px 40px; 
+/* --- PRICING REDESIGN (SQUARED, EVEN, COMPACT) --- */
+        .modal-pricing-content {
+            max-width: 1100px; /* Much Wider to fit columns */
+            width: 95%;
+            padding: 40px;
             background: var(--bg-body);
             border: 1px solid var(--border);
-            overflow: visible; 
+            border-radius: 12px; /* More Squared */
+            overflow: visible;
         }
 
         .pricing-header {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             position: relative; z-index: 2;
         }
         .pricing-header h2 {
-            font-size: 2.5rem; font-weight: 800;
-            background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            font-size: 2rem; /* Slightly smaller header */
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
         }
 
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr); /* 3 Equal Columns */
-            gap: 2rem; 
-            margin-top: 1rem; 
-            align-items: stretch; /* Forces equal height */
+            gap: 1.5rem;
+            align-items: stretch; /* Forces exact equal height */
             position: relative; z-index: 2;
         }
 
         .price-card {
             background: var(--bg-surface);
-            border: 1px solid var(--border); border-radius: 24px; padding: 2rem;
-            display: flex; flex-direction: column; position: relative;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            min-height: 440px;
+            border: 1px solid var(--border); 
+            border-radius: 8px; /* Very Squared */
+            padding: 1.5rem; /* Compact padding */
+            display: flex; 
+            flex-direction: column; 
+            position: relative;
+            transition: all 0.2s ease;
+            height: 100%; /* Fills the grid height */
         }
-        .price-card:hover { transform: translateY(-5px); border-color: var(--text-muted); }
+        
+        .price-card:hover { 
+            border-color: var(--text-muted); 
+            transform: translateY(-2px);
+        }
 
-        /* The Popular Card - FIXED (No Zoom) */
+        /* The Popular Card */
         .price-card.popular {
-            background: var(--bg-surface); 
-            border: 2px solid var(--accent); /* Highlights with color, not size */
-            box-shadow: 0 0 40px var(--accent-glow);
+            background: var(--bg-surface);
+            border: 2px solid var(--accent); 
+            box-shadow: 0 4px 20px var(--accent-glow);
             z-index: 1;
-            padding: 2rem; 
-            transform: none; /* Explicitly prevents scaling */
         }
-        .price-card.popular:hover { transform: translateY(-5px); }
 
         .pop-badge {
-            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); color: white; padding: 6px 16px; border-radius: 100px;
-            font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-            box-shadow: 0 4px 12px var(--accent-glow); white-space: nowrap;
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); color: white; padding: 4px 12px; 
+            border-radius: 4px; /* Squared badge */
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+            box-shadow: 0 2px 8px var(--accent-glow); white-space: nowrap;
         }
 
         .price-title {
-            font-size: 1.1rem; font-weight: 600; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;
+            font-size: 1rem; font-weight: 700; color: var(--text-main);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;
+            text-align: center;
         }
 
         .price-cost {
-            display: flex; align-items: baseline; font-size: 3rem; font-weight: 800;
-            color: var(--text-main); margin-bottom: 2rem; line-height: 1;
+            display: flex; align-items: baseline; justify-content: center;
+            font-size: 2.5rem; font-weight: 800;
+            color: var(--text-main); margin-bottom: 1.5rem; line-height: 1;
         }
-        .price-cost .currency { font-size: 1.5rem; vertical-align: top; margin-right: 2px; }
-        .price-cost .period { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; margin-left: 4px; }
+        .price-cost .currency { font-size: 1.2rem; vertical-align: top; margin-right: 2px; }
+        .price-cost .period { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-left: 4px; }
 
-        .feature-list { list-style: none; margin-bottom: auto; padding: 0; }
+        .feature-list { 
+            list-style: none; 
+            margin-bottom: 2rem; 
+            padding: 0; 
+            flex-grow: 1; /* Pushes button to bottom */
+        }
         .feature-list li {
-            margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);
-            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--text-muted);
+            display: flex; align-items: center; gap: 10px;
         }
         .feature-list li svg {
-            color: var(--accent); flex-shrink: 0; background: var(--accent-glow);
-            padding: 3px; border-radius: 50%; width: 22px; height: 22px;
+            color: var(--accent); flex-shrink: 0;
+            width: 18px; height: 18px;
         }
-        .feature-list li span { line-height: 1.3; }
 
         .btn-select-plan {
-            width: 100%; padding: 16px; border-radius: 16px; border: 1px solid var(--border);
-            font-weight: 700; cursor: pointer; font-size: 0.95rem; transition: 0.2s;
-            background: transparent; color: var(--text-main); margin-top: 1.5rem;
+            width: 100%; padding: 12px; 
+            border-radius: 6px; /* Squared button */
+            border: 1px solid var(--border);
+            font-weight: 700; cursor: pointer; font-size: 0.9rem; transition: 0.2s;
+            background: var(--bg-surface-hover); color: var(--text-main); 
+            margin-top: auto; /* Ensures alignment at bottom */
         }
-        .btn-select-plan:hover { background: var(--bg-surface-hover); border-color: var(--text-main); }
+        .btn-select-plan:hover { background: var(--border); }
 
         .price-card.popular .btn-select-plan {
             background: var(--accent); color: white; border: none;
-            box-shadow: 0 4px 15px var(--accent-glow);
         }
-        .price-card.popular .btn-select-plan:hover { box-shadow: 0 8px 25px var(--accent-glow); transform: translateY(-2px); }
+        .price-card.popular .btn-select-plan:hover { opacity: 0.9; }
 
         /* --- TOAST & UTILS --- */
         .toast { 
