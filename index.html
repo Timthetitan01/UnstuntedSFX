@@ -485,30 +485,29 @@
             
             <div class="pricing-grid">
                 <div class="price-card">
-                    <div class="price-title">Starter</div>
+                    <div class="price-title">Monthly</div>
                     <div class="price-cost">
                         <span class="currency">$</span>3<span class="period">/mo</span>
                     </div>
                     <ul class="feature-list">
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>50 Downloads / mo</span>
+                            <span>infinite downloads</span>
                         </li>
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>Standard MP3</span>
+                            <span>High quality audio</span>
                         </li>
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>Personal License</span>
+                            <span>50+ new songs added daily</span>
                         </li>
                     </ul>
-                    <button class="btn-select-plan" onclick="checkout('starter')">Choose Starter</button>
+                    <button class="btn-select-plan" onclick="checkout('starter')">Get Monthly</button>
                 </div>
     
-                <div class="price-card popular">
-                    <div class="pop-badge">Best Value</div>
-                    <div class="price-title">Yearly Pro</div>
+                <div class="price-card">
+                    <div class="price-title">Yearly</div>
                     <div class="price-cost">
                         <span class="currency">$</span>30<span class="period">/yr</span>
                     </div>
@@ -519,21 +518,22 @@
                         </li>
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>High-Res WAV & FLAC</span>
+                            <span>infinite downloads</span>
                         </li>
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>Commercial License</span>
+                            <span>Paid once yearly</span>
                         </li>
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>Priority Support</span>
+                            <span>50+ new songs added daily</span>
                         </li>
                     </ul>
-                    <button class="btn-select-plan" onclick="checkout('pro')">Upgrade to Pro</button>
+                    <button class="btn-select-plan" onclick="checkout('pro')">Get Yearly</button>
                 </div>
     
-                <div class="price-card">
+                <div class="price-card popular">
+                <div class="pop-badge">Best Value</div>
                     <div class="price-title">Lifetime</div>
                     <div class="price-cost">
                         <span class="currency">$</span>50<span class="period">/once</span>
@@ -545,11 +545,11 @@
                         </li>
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>Stem Separation</span>
+                            <span>infinite downloads</span>
                         </li>
                         <li>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>Future Updates</span>
+                            <span>50+ new songs added daily</span>
                         </li>
                     </ul>
                     <button class="btn-select-plan" onclick="checkout('ultimate')">Get Lifetime</button>
@@ -631,9 +631,9 @@
         const R2_PUBLIC_URL = "https://pub-5b2715d43ab24b93979acc13060553d9.r2.dev";
 
         const STRIPE_PRICES = {
-            'starter': 'https://buy.stripe.com/test_7sY14pa3gfFmezec5l6Zy04', 
-            'pro': 'https://buy.stripe.com/test_your_yearly_link...',      
-            'ultimate': 'https://buy.stripe.com/test_your_lifetime_link...'  
+            'starter': 'https://buy.stripe.com/fZu14o0DK1LufThdQJ08g09', 
+            'pro': 'https://buy.stripe.com/aFaaEYfyE3TC36vbIB08g0a',      
+            'ultimate': 'https://buy.stripe.com/4gM9AU1HO61K0YnbIB08g0b'  
         };
 
         const firebaseConfig = {
